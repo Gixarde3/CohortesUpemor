@@ -31,6 +31,7 @@ class LoginController extends Controller
             'token' => $token,
             'email' => $usuario->email,
             'tipoUsuario' => $usuario->tipoUsuario,
+            'success'=>true
         ]);
     }
 
@@ -50,11 +51,12 @@ class LoginController extends Controller
         $usuario->recuperacion = $token;
         $usuario->save();
 
-        $url = "localhost:3000/restaurar/$token";
+        $url = "localhost:5173/restaurar/$token";
         Mail::to($request->email)->send(new MailRestauracion($url));
         // Devolver los datos solicitados en formato JSON
         return response()->json([
-            'message' => 'Correo enviado'
+            'message' => 'Correo enviado',
+            'success' => true
         ]);
     }
 
@@ -77,8 +79,19 @@ class LoginController extends Controller
 
         // Devolver los datos solicitados en formato JSON
         return response()->json([
-            'token' => $token,
-            'email' => $usuario->email,
+            'success' => true
+        ]);
+    }
+
+    public function verifyHash(Request $request, $hash){
+        $usuario = Usuario::where('recuperacion', $hash)->first();
+
+        if (!$usuario) {
+            return response()->json(['error' => 'Credenciales inválidas'], 401);
+        }
+
+        return response()->json([
+            'success' => true
         ]);
     }
 }

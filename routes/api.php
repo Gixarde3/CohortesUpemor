@@ -21,6 +21,7 @@ use App\Http\Controllers\LoginController;
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/sendMail', [LoginController::class, 'sendRestoreMail']);
 Route::post('/restorePassword/{hash}', [LoginController::class, 'restorePassword']);
+Route::post('/verifyHash/{hash}', [LoginController::class, 'verifyHash']);
 
 Route::controller(UsuarioController::class)->group(function(){
     Route::post('register','register');
