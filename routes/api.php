@@ -37,5 +37,6 @@ Route::controller(CohorteController::class)->group(function(){
     Route::post('cohorte/edit/{id}','editCohorte');
     Route::post('cohorte/delete/{id}','deleteCohorte');
     Route::get('cohortes','getAllCohortes');
+    Route::get('cohorte/{id}','getCohorteById');
 });
 

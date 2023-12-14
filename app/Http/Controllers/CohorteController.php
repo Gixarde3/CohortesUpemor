@@ -68,19 +68,22 @@ class CohorteController extends Controller
         ]);
     }
     public function getAllCohortes(Request $request){
-        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
-        if ($admin) {
-            $cohortes = Cohorte::all();
-            $success = true;
-            $message = 'Cohortes obtenidos correctamente';
-        }else{
-            $success = false;
-            $message = "No cuentas con los permisos necesarios";
-        }
-        
+        $cohortes = Cohorte::all();
+        $success = true;
+        $message = 'Cohortes obtenidos correctamente';
         return response()->json([
             'success'=> $success,
             'cohortes'=>$cohortes,
+            'message'=>$message
+        ]);
+    }
+    public function getCohorteById(Request $request, $id){
+        $cohorte = Cohorte::find($id);
+        $success = true;
+        $message = 'Cohorte obtenido correctamente';
+        return response()->json([
+            'success'=> $success,
+            'cohorte'=>$cohorte,
             'message'=>$message
         ]);
     }
