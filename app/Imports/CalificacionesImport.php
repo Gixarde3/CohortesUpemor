@@ -7,8 +7,11 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow; // Add this line
 use Maatwebsite\Excel\Concerns\WithBatchInserts; // Add this line
 use Maatwebsite\Excel\Concerns\WithChunkReading; // Add this line
+use Maatwebsite\Excel\Concerns\WithValidation; // Add this line
+use Maatwebsite\Excel\Concerns\SkipsOnFailure; // Add this line
+use Maatwebsite\Excel\Validators\Failure;
 
-class CalificacionesImport implements ToModel, WithHeadingRow, WithBatchInserts, WithChunkReading
+class CalificacionesImport implements ToModel, WithHeadingRow, WithBatchInserts, WithChunkReading, WithValidation, SkipsOnFailure
 {
     /**
     * @param array $row
@@ -23,7 +26,7 @@ class CalificacionesImport implements ToModel, WithHeadingRow, WithBatchInserts,
     }
     public function model(array $row)
     {
-        if(!isset($row['clave_grupo'])){
+        if(!isset($row['nombre_grupo'])){
             return null;
         }
         return new CalificacionProcesada([
@@ -58,5 +61,15 @@ class CalificacionesImport implements ToModel, WithHeadingRow, WithBatchInserts,
     public function chunkSize(): int
     {
         return 100;
+    }
+    public function rules(): array
+    {
+        return [
+            'calificacion' => ['required','integer']
+        ];
+    }
+    public function onFailure(Failure ...$failures) // Add this line
+    {
+        // Handle the failures how you'd like.
     }
 }
