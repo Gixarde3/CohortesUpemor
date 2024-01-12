@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\CohorteController;
+use App\Http\Controllers\GrupoController; // Import the missing class
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\LoginController;
-
+use App\Models\CalificacionCuatrimestral;
+use App\Http\Controllers\CalificacionCuatrimestralController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,3 +42,23 @@ Route::controller(CohorteController::class)->group(function(){
     Route::get('cohorte/{id}','getCohorteById');
 });
 
+Route::controller(CalificacionCuatrimestralController::class)->group(function(){
+    Route::get('calificaciones','calificaciones');
+    Route::get('calificacion/{id}','getCalificacionById');
+    Route::post('calificacion','subirCalificacion');
+    Route::post('calificacion/{id}','actualizarCalificaciones');
+    Route::post('calificacion/delete/{id}','eliminarCalificaciones');
+    Route::get('calificacion/download/{fileName}','download');
+});
+
+Route::controller(GrupoController::class)->group(function(){ // The undefined type 'GrupoController' is now defined
+    Route::post('grupo','crearGrupo');
+    Route::post('grupo/edit/{id}','editarGrupo');
+    Route::post('grupo/delete/{id}','eliminarGrupo');
+    Route::get('grupos','getGrupos');
+    Route::get('grupo/{id}','getGrupoById');
+    Route::get('grupo/grado/{grado}','getGrupoByGrado');
+    Route::get('grupo/periodo/{periodo}','getGrupoByPeriodo');
+    Route::get('grupo/grupo/{grupo}','getGrupoByGrupo');
+    Route::get('grupo/fecha/{fecha}','getGrupoByFecha');
+});

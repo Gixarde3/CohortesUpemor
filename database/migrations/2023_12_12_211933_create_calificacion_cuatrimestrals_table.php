@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('periodo');
             $table->year('anio');
+            $table->string('carrera');
             $table->string('programaEducativo');
             $table->string('archivo');
-            $table->boolean('procesado');
+            $table->boolean('procesado')->default(false);
             $table->unsignedBigInteger('idCreador');
             $table->foreign('idCreador')->references('id')->on('usuarios')->onCascade('delete');
             $table->timestamps();
