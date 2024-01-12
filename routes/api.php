@@ -8,6 +8,8 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\LoginController;
 use App\Models\CalificacionCuatrimestral;
 use App\Http\Controllers\CalificacionCuatrimestralController;
+use App\Models\CalificacionCuatrimestralProcesada;
+use App\Http\Controllers\CalificacionCuatrimestralProcesadaController; // Import the missing class
 
 /*
 |--------------------------------------------------------------------------
@@ -61,4 +63,8 @@ Route::controller(GrupoController::class)->group(function(){ // The undefined ty
     Route::get('grupo/periodo/{periodo}','getGrupoByPeriodo');
     Route::get('grupo/grupo/{grupo}','getGrupoByGrupo');
     Route::get('grupo/fecha/{fecha}','getGrupoByFecha');
+});
+
+Route::controller(CalificacionCuatrimestralProcesadaController::class)->group(function(){
+    Route::post('calificacion/procesar/{id}','importarExcel');
 });
