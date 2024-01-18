@@ -12,6 +12,9 @@ class CalificacionCuatrimestral extends Model
         return $this->belongsTo(Usuario::class);
     }
     public function calificacionesCuatrimestralesProcesadas(){
-        return $this->hasMany(CalificacionCuatrimestralProcesada::class);
+        return $this->hasMany(CalificacionProcesada::class);
+    }
+    public function excels(){
+        return $this->belongsTo(Excels::class);
     }
 }

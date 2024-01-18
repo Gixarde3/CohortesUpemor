@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('calificacion_procesadas', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('idCalificacionCuatrimestral');
-            $table->foreign('idCalificacionCuatrimestral')->references('id')->on('calificacion_cuatrimestrals')->onCascade('delete');
+            $table->foreign('idCalificacionCuatrimestral')->references('id')->on('calificacion_cuatrimestrals')->onDelete('cascade');
             $table->string('ClaveGrupo')->nullable();
             $table->string('NombreGrupo')->nullable();
             $table->string('LetraGrupo')->nullable();

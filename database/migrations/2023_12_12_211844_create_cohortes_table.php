@@ -17,7 +17,7 @@ return new class extends Migration
             $table->year('anio');
             $table->string('plan');
             $table->unsignedBigInteger('idCreador');
-            $table->foreign('idCreador')->references('id')->on('usuarios')->onCascade('delete');
+            $table->foreign('idCreador')->references('id')->on('usuarios')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('periodo');
             $table->date('fecha');
             $table->unsignedBigInteger('idCreador');
-            $table->foreign('idCreador')->references('id')->on('usuarios')->onCascade('delete');
+            $table->foreign('idCreador')->references('id')->on('usuarios')->onDelete('cascade');
             $table->timestamps();
         });
     }

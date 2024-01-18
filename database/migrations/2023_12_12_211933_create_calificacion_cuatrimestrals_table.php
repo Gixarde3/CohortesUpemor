@@ -17,10 +17,10 @@ return new class extends Migration
             $table->year('anio');
             $table->string('carrera');
             $table->string('programaEducativo');
-            $table->string('archivo');
-            $table->boolean('procesado')->default(false);
+            $table->unsignedBigInteger('idArchivo');
             $table->unsignedBigInteger('idCreador');
-            $table->foreign('idCreador')->references('id')->on('usuarios')->onCascade('delete');
+            $table->foreign('idArchivo')->references('id')->on('excels')->onDelete('cascade');
+            $table->foreign('idCreador')->references('id')->on('usuarios')->onDelete('cascade');
             $table->timestamps();
         });
     }

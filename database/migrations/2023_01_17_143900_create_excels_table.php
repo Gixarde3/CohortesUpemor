@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('admisions', function (Blueprint $table) {
+        Schema::create('excels', function (Blueprint $table) {
             $table->id();
             $table->string('archivo');
-            $table->boolean('procesado');
-            $table->unsignedBigInteger('idCreador');
-            $table->foreign('idCreador')->references('id')->on('usuarios')->onDelete('cascade');
+            $table->boolean('procesado')->default(false);
+            $table->string('tipo');
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('admisions');
+        Schema::dropIfExists('excels');
     }
 };

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('admision_procesadas', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('idAdmision');
-            $table->foreign('idAdmision')->references('id')->on('admisions')->onCascade('delete');
+            $table->foreign('idAdmision')->references('id')->on('admisions')->onDelete('cascade');
             $table->integer('alumnosCursoSeleccion');
             $table->integer('alumnosCursoSeleccionAprobados');
             $table->integer('alumnosInscritosPrimero');

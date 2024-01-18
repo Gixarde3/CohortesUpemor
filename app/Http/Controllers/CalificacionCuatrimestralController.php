@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Usuario;
+use App\Models\Excels;
 use App\Models\CalificacionCuatrimestral; // Add this line
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 class CalificacionCuatrimestralController extends Controller
 {
     public function calificaciones(Request $request){
-        $calificaciones = CalificacionCuatrimestral::all();
+        $calificaciones = CalificacionCuatrimestral::select('calificacion_cuatrimestrals.*', 'excels.archivo', 'excels.procesado')->join('excels','calificacion_cuatrimestrals.idArchivo', '=', 'excels.id')->get();
         $success = true;
         $message = 'Calificaciones obtenidas correctamente';
         return response()->json([
@@ -24,6 +25,7 @@ class CalificacionCuatrimestralController extends Controller
         $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
         if ($admin) {
             $newCalificaciones = new CalificacionCuatrimestral();
+            $newFile = new Excels();
             $newCalificaciones->periodo = $request->periodo;
             $newCalificaciones->carrera = $request->carrera;
             $newCalificaciones->anio = $request->anio;
@@ -32,7 +34,10 @@ class CalificacionCuatrimestralController extends Controller
             $extension = $file->getClientOriginalExtension();
             $allowedExtensions = ['xls', 'xlsx'];
             if (in_array($extension, $allowedExtensions)) {
-                $newCalificaciones->archivo = $this->manejarArchivo($request->file('archivo'));
+                $newFile->archivo = $this->manejarArchivo($request->file('archivo'));
+                $newFile->tipo = "Calificaciones Cuatrimestrales";
+                $newFile->save();
+                $newCalificaciones->idArchivo = $newFile->id;
             } else {
                 $success = false;
                 $message = "El archivo debe ser un Excel válido";
@@ -55,7 +60,8 @@ class CalificacionCuatrimestralController extends Controller
         ]);
     }
     public function getCalificacionById(Request $request, $id){
-        $calificaciones = CalificacionCuatrimestral::find($id);
+        $calificaciones = CalificacionCuatrimestral::select('calificacion_cuatrimestrals.*', 'excels.archivo', 'excels.procesado')->join('excels','calificacion_cuatrimestrals.idArchivo', '=', 'excels.id')->where('calificacion_cuatrimestrals.id', '=', $id)->first();
+
         if($calificaciones){
             $success = true;
             $message = 'Calificaciones obtenidas correctamente';
@@ -74,6 +80,7 @@ class CalificacionCuatrimestralController extends Controller
         $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 3)->first();
         if ($admin) {
             $calificaciones = CalificacionCuatrimestral::find($id);
+            $archivo = Excels::find($calificaciones->idArchivo);
             $calificaciones->periodo = $request->periodo;
             $calificaciones->carrera = $request->carrera;
             $calificaciones->anio = $request->anio;
@@ -83,8 +90,9 @@ class CalificacionCuatrimestralController extends Controller
                 $extension = $file->getClientOriginalExtension();
                 $allowedExtensions = ['xls', 'xlsx'];
                 if (in_array($extension, $allowedExtensions)) {
-                    $this->deleteFile($calificaciones->archivo);
-                    $calificaciones->archivo = $this->manejarArchivo($file);
+                    $this->deleteFile($archivo->archivo);
+                    $archivo->archivo = $this->manejarArchivo($file);
+                    $archivo->save();
                 } else {
                     $success = false;
                     $message = "El archivo debe ser un Excel válido";
@@ -110,10 +118,12 @@ class CalificacionCuatrimestralController extends Controller
     public function eliminarCalificaciones(Request $request, $id){
         $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
         if ($admin) {
-            $calificaciones = CalificacionCuatrimestral::find($id);
+            $calificaciones = CalificacionCuatrimestral::select('calificacion_cuatrimestrals.*', 'excels.archivo', 'excels.procesado')->join('excels','calificacion_cuatrimestrals.idArchivo', '=', 'excels.id')->where('calificacion_cuatrimestrals.id', '=', $id)->first();
+            $excel = Excels::find($calificaciones->idArchivo);
             if($calificaciones){
                 $this->deleteFile($calificaciones->archivo);
                 $calificaciones->delete();
+                $excel->delete();
                 $success = true;
                 $message = 'Calificaciones eliminadas correctamente';
             }else{
