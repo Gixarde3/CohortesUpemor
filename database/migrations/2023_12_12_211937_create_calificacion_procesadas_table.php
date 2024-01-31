@@ -14,23 +14,17 @@ return new class extends Migration
         Schema::create('calificacion_procesadas', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('idCalificacionCuatrimestral');
-            $table->foreign('idCalificacionCuatrimestral')->references('id')->on('calificacion_cuatrimestrals')->onDelete('cascade');
-            $table->string('ClaveGrupo')->nullable();
-            $table->string('NombreGrupo')->nullable();
-            $table->string('LetraGrupo')->nullable();
-            $table->string('PaternoProfesor')->nullable();
-            $table->string('MaternoProfesor')->nullable();
-            $table->string('NombreProfesor')->nullable();
-            $table->string('ClaveMateria')->nullable();
-            $table->string('NombreMateria')->nullable();
-            $table->string('PlanEstudios')->nullable();
-            $table->string('Matricula');
-            $table->string('PaternoAlumno')->nullable();
-            $table->string('MaternoAlumno')->nullable();
-            $table->string('NombreAlumno')->nullable();
-            $table->string('EstadoAlumno')->nullable();
+            $table->unsignedBigInteger('idGrupo');
+            $table->unsignedBigInteger('idMateria');
+            $table->unsignedBigInteger('idProfesor');
+            $table->unsignedBigInteger('idAlumno');
             $table->integer('CalificacionAlumno')->nullable();
             $table->string('TipoCursamiento')->nullable();
+            $table->foreign('idCalificacionCuatrimestral')->references('id')->on('calificacion_cuatrimestrals')->onDelete('cascade');
+            $table->foreign('idGrupo')->references('id')->on('grupos')->onDelete('cascade');
+            $table->foreign('idMateria')->references('id')->on('materias')->onDelete('cascade');
+            $table->foreign('idProfesor')->references('id')->on('profesors')->onDelete('cascade');
+            $table->foreign('idAlumno')->references('id')->on('alumnos')->onDelete('cascade');
             $table->timestamps();
         });
     }

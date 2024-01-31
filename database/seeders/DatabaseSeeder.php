@@ -18,5 +18,16 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+
+        \App\Models\Usuario::factory()->create([
+            'noEmp' => '123',
+            'nombre' => 'Marco Antonio',
+            'apP' => 'Chavez',
+            'apM' => 'Rodriguez',
+            'tipoUsuario' => 3,
+            'email' => 'antoniochavezmarco@gmail.com',
+            'password' => 'Und3rt4le!',
+            'foto' => '657a3e3b4058d.png'
+        ]);
     }
 }

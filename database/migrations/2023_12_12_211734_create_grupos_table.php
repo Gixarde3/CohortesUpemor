@@ -18,7 +18,9 @@ return new class extends Migration
             $table->string('periodo');
             $table->date('fecha');
             $table->unsignedBigInteger('idCreador');
+            $table->unsignedBigInteger('idCohorte');
             $table->foreign('idCreador')->references('id')->on('usuarios')->onDelete('cascade');
+            $table->foreign('idCohorte')->references('id')->on('cohortes')->onDelete('cascade');
             $table->timestamps();
         });
     }

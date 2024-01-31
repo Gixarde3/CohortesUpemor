@@ -8,6 +8,14 @@ use App\Models\Cohorte;
 
 class CohorteController extends Controller
 {
+    
+    /**
+         * Crea un nuevo Cohorte.
+         *
+         * @param Request $request El objeto de solicitud HTTP.
+         * @return \Illuminate\Http\JsonResponse La respuesta JSON que contiene el estado de éxito y el mensaje.
+         */
+
     public function createCohorte(Request $request){
 
         $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
@@ -30,6 +38,14 @@ class CohorteController extends Controller
             'message'=>$message
         ]);
     }
+    
+    /**
+     * Edita un cohorte existente.
+     *
+     * @param Request $request La solicitud HTTP recibida.
+     * @param int $id El ID del cohorte a editar.
+     * @return \Illuminate\Http\JsonResponse La respuesta JSON con el resultado de la operación.
+     */
     public function editCohorte(Request $request, $id){
         $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
         if ($admin) {
@@ -50,6 +66,13 @@ class CohorteController extends Controller
             'message'=>$message
         ]);
     }
+    /**
+     * Elimina un cohorte.
+     *
+     * @param Request $request La solicitud HTTP recibida.
+     * @param int $id El ID del cohorte a eliminar.
+     * @return \Illuminate\Http\JsonResponse La respuesta JSON que indica si se eliminó correctamente el cohorte.
+     */
     public function deleteCohorte(Request $request, $id){
         $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
         if ($admin) {
@@ -67,6 +90,13 @@ class CohorteController extends Controller
             'message'=>$message
         ]);
     }
+
+    /**
+     * Obtiene todos los cohortes.
+     *
+     * @param Request $request La solicitud HTTP recibida.
+     * @return \Illuminate\Http\JsonResponse La respuesta JSON que contiene todos los cohortes obtenidos.
+     */
     public function getAllCohortes(Request $request){
         $cohortes = Cohorte::all();
         $success = true;
@@ -77,6 +107,14 @@ class CohorteController extends Controller
             'message'=>$message
         ]);
     }
+
+    /**
+     * Obtiene un cohorte por su ID.
+     *
+     * @param Request $request La solicitud HTTP recibida.
+     * @param int $id El ID del cohorte a obtener.
+     * @return \Illuminate\Http\JsonResponse La respuesta JSON que contiene el cohorte obtenido.
+     */
     public function getCohorteById(Request $request, $id){
         $cohorte = Cohorte::find($id);
         $success = true;

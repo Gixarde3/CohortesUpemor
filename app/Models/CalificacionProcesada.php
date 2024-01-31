@@ -31,4 +31,16 @@ class CalificacionProcesada extends Model
     public function calificacionesCuatrimestrales(){
         return $this->belongsTo(CalificacionCuatrimestral::class);
     }
+
+    public function alumnos(){
+        return $this->belongsTo(Alumno::class);
+    }
+
+    public function profesores(){
+        return $this->belongsTo(Profesor::class);
+    }
+
+    public function materias(){
+        return $this->belongsTo(Materia::class);
+    }
 }

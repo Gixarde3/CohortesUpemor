@@ -13,9 +13,15 @@ use App\Imports\CalificacionesImportMulti; // Import the missing class
 
 class CalificacionCuatrimestralProcesadaController extends Controller
 {
-    //
+    /**
+     * Importa un archivo de excel con las calificaciones de un grupo.
+     * Para esto hace uso del paquete Laravel Excel.
+     */
     public function importarExcel(Request $request, $id){
-        $calificaciones = CalificacionCuatrimestral::select('calificacion_cuatrimestrals.*', 'excels.archivo', 'excels.procesado')->join('excels','calificacion_cuatrimestrals.idArchivo', '=', 'excels.id')->where('calificacion_cuatrimestrals.id', '=', $id)->first();
+        $calificaciones = CalificacionCuatrimestral::select('calificacion_cuatrimestrals.*', 'excels.archivo', 'excels.procesado')
+          ->join('excels','calificacion_cuatrimestrals.idArchivo', '=', 'excels.id')
+          ->where('calificacion_cuatrimestrals.id', '=', $id)
+          ->first();
         $excelProcesar = Excels::find($calificaciones->idArchivo);
         $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
         if($admin){
