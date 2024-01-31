@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Materia extends Model
 {
     use HasFactory;
-
-    public function calificaciones(){
+    protected $fillable = ['clave', 'nombre', 'plan'];
+    public function calificacionProcesadas(){
         return $this->hasMany(CalificacionProcesada::class);
     }
 }

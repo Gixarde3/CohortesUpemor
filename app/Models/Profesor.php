@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Profesor extends Model
 {
     use HasFactory;
-
-    public function calificaciones(){
+    protected $fillable = ['apP', 'apM', 'nombre'];
+    public function calificacionProcesadas(){
         return $this->hasMany(CalificacionProcesada::class);
     }
 }

@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('materias', function (Blueprint $table) {
             $table->id();
-            $table->string('clave');
-            $table->string('nombre');
-            $table->string('plan');
+            $table->string('nombre')->nullable();
+            $table->string('clave')->nullable();
+            $table->string('plan')->nullable();
             $table->timestamps();
         });
     }

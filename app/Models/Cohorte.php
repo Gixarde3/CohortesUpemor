@@ -8,7 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Cohorte extends Model
 {
     use HasFactory;
+    protected $fillable = [
+
+    ];
+
     public function usuarios(){
         return $this->belongsTo(Usuario::class);
+    }
+    public function calificacionProcesadas(){
+        return $this->hasMany(CalificacionProcesada::class);
     }
 }

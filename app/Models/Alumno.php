@@ -9,8 +9,8 @@ use App\Models\CalificacionProcesada; // Import the missing class
 class Alumno extends Model
 {
     use HasFactory;
-
-    public function calificaciones(){
+    protected $fillable = ['matricula', 'apP', 'apM', 'nombre'];
+    public function calificacionProcesadas(){
         return $this->hasMany(CalificacionProcesada::class);
     }
 }

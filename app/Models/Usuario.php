@@ -22,6 +22,7 @@ class Usuario extends Model
      * @var array
      */
 
+   
     public function setPasswordAttribute($password)
     {
         $this->attributes['password'] = Hash::make($password);
@@ -35,8 +36,5 @@ class Usuario extends Model
     }
     public function cohortes(){
         return $this->hasMany(Cohorte::class);
-    }
-    public function calificacionesCuatrimestrales(){
-        return $this->hasMany(CalificacionCuatrimestral::class);
     }
 }

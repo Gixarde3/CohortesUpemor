@@ -42,13 +42,7 @@ Route::controller(CohorteController::class)->group(function(){
     Route::post('cohorte/delete/{id}','deleteCohorte');
     Route::get('cohortes','getAllCohortes');
     Route::get('cohorte/{id}','getCohorteById');
-});
-
-Route::controller(CalificacionCuatrimestralController::class)->group(function(){
-    Route::get('calificaciones','calificaciones');
-    Route::get('calificacion/{id}','getCalificacionById');
     Route::post('calificacion','subirCalificacion');
-    Route::post('calificacion/{id}','actualizarCalificaciones');
     Route::post('calificacion/delete/{id}','eliminarCalificaciones');
     Route::get('calificacion/download/{fileName}','download');
 });

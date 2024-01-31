@@ -9,38 +9,27 @@ class CalificacionProcesada extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'idCalificacionCuatrimestral',
-        'ClaveGrupo',
-        'NombreGrupo',
-        'LetraGrupo',
-        'PaternoProfesor',
-        'MaternoProfesor',
-        'NombreProfesor',
-        'ClaveMateria',
-        'NombreMateria',
-        'PlanEstudios',
-        'Matricula',
-        'PaternoAlumno',
-        'MaternoAlumno',
-        'NombreAlumno',
-        'EstadoAlumno',
-        'CalificacionAlumno',
-        'TipoCursamiento'
+        'idCohorte',
+        'idAlumno',
+        'idMateria',
+        'idProfesor',
+        'idGrupo',
+        'calificacion',
+        'tipoCursamiento'
     ];
-
-    public function calificacionesCuatrimestrales(){
-        return $this->belongsTo(CalificacionCuatrimestral::class);
-    }
-
     public function alumnos(){
         return $this->belongsTo(Alumno::class);
     }
-
+    public function materias(){
+        return $this->belongsTo(Materia::class);
+    }
+    public function cohortes(){
+        return $this->belongsTo(Cohorte::class);
+    }
     public function profesores(){
         return $this->belongsTo(Profesor::class);
     }
-
-    public function materias(){
-        return $this->belongsTo(Materia::class);
+    public function grupos(){
+        return $this->belongsTo(Grupo::class);
     }
 }

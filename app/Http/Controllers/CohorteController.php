@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Usuario;
 use App\Models\Cohorte;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class CohorteController extends Controller
 {
@@ -124,5 +126,87 @@ class CohorteController extends Controller
             'cohorte'=>$cohorte,
             'message'=>$message
         ]);
+    }
+    public function subirCalificacion(Request $request, $id){
+        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+        if ($admin) {
+            $cohorte = Cohorte::find($id);
+            if($cohorte){
+                $cohorte->archivo = $this->manejarArchivo($request->archivo);
+                $cohorte->save();
+            }else{
+                $success = false;
+                $message = "No se encontró el cohorte con ese ID";
+            }
+        } else {
+            $success = false;
+            $message = "No cuentas con los permisos necesarios";
+        }
+        return response()->json([
+            'success' => $success,
+            'message' => $message
+        ]);
+    }
+    public function eliminarCalificacion(Request $request, $id){
+        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+        if ($admin) {
+            $cohorte = Cohorte::find($id);
+            if($cohorte){
+                $cohorte->archivo = null;
+                $cohorte->save();
+                $this->deleteFile($request->archivo);
+            }else{
+                $success = false;
+                $message = "No se encontró el cohorte con ese ID";
+            }
+        } else {
+            $success = false;
+            $message = "No cuentas con los permisos necesarios";
+        }
+        return response()->json([
+            'success' => $success,
+            'message' => $message
+        ]);
+    }
+    public function downloadCalificacion(Request $request, $id){
+        $cohorte = Cohorte::find($id);
+        if($cohorte){
+            return $this->download($request, $cohorte->archivo);
+        }else{
+            return response()->json([
+                'success' => false,
+                'message' => "No se encontró el cohorte con ese ID"
+            ]);
+        }
+    }
+    public function manejarArchivo($file)
+    {
+        $nameFile = uniqid();
+        $extensionFile = '.' . $file->getClientOriginalExtension();
+        $file->storeAs('public/', $nameFile . $extensionFile);
+        $storageRoute = storage_path('app/public/' . $nameFile . $extensionFile);
+        $publicRoute = public_path('excel/' . $nameFile . $extensionFile);
+        File::move($storageRoute, $publicRoute);
+        Storage::delete($storageRoute);
+        return $nameFile . $extensionFile;
+    }
+    public function download(Request $request, $filename)
+    {
+        // Define la ruta al archivo dentro de la carpeta de almacenamiento (por ejemplo, en la carpeta "public")
+        $rutaArchivo = public_path('excel/'.$filename);
+
+        // Obtén el archivo como una respuesta
+        return response()->file($rutaArchivo, ['Content-Disposition' => 'attachment; filename="' . $filename . '"']);
+    }
+
+    public function deleteFile($fileName)
+    {
+        $filePath = public_path('excel/' . $fileName);
+        if (file_exists($filePath)) {
+            unlink($filePath);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

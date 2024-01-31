@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('alumnos', function (Blueprint $table) {
             $table->id();
             $table->string('matricula');
-            $table->string('apP');
-            $table->string('apM');
-            $table->string('nombre');
-            $table->boolean('activo');
+            $table->string('apP')->nullable();
+            $table->string('apM')->nullable();
+            $table->string('nombre')->nullable();
+            $table->boolean('activo')->default(true);
             $table->timestamps();
         });
     }

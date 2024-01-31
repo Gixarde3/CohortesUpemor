@@ -13,13 +13,10 @@ return new class extends Migration
     {
         Schema::create('grupos', function (Blueprint $table) {
             $table->id();
-            $table->string('grupo',1);
-            $table->integer('grado');
-            $table->string('periodo');
-            $table->date('fecha');
-            $table->unsignedBigInteger('idCreador');
+            $table->string('clave');
+            $table->string('nombre');
+            $table->string('letra',1);
             $table->unsignedBigInteger('idCohorte');
-            $table->foreign('idCreador')->references('id')->on('usuarios')->onDelete('cascade');
             $table->foreign('idCohorte')->references('id')->on('cohortes')->onDelete('cascade');
             $table->timestamps();
         });

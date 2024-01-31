@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Grupo extends Model
 {
     use HasFactory;
-    public function usuarios(){
-        return $this->belongsTo(Usuario::class);
+    protected $fillable = ['clave', 'nombre', 'letra', 'idCohorte'];
+    public function calificacionProcesadas(){
+        return $this->hasMany(CalificacionProcesada::class);
     }
 }

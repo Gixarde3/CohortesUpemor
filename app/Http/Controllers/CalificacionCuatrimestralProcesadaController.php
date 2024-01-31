@@ -10,7 +10,7 @@ use App\Models\Usuario;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\CalificacionProcesada; // Import the missing class
 use App\Imports\CalificacionesImportMulti; // Import the missing class
-
+use App\Models\Cohorte; // Import the missing class
 class CalificacionCuatrimestralProcesadaController extends Controller
 {
     /**
@@ -18,20 +18,15 @@ class CalificacionCuatrimestralProcesadaController extends Controller
      * Para esto hace uso del paquete Laravel Excel.
      */
     public function importarExcel(Request $request, $id){
-        $calificaciones = CalificacionCuatrimestral::select('calificacion_cuatrimestrals.*', 'excels.archivo', 'excels.procesado')
-          ->join('excels','calificacion_cuatrimestrals.idArchivo', '=', 'excels.id')
-          ->where('calificacion_cuatrimestrals.id', '=', $id)
-          ->first();
-        $excelProcesar = Excels::find($calificaciones->idArchivo);
         $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+        $cohorte = Cohorte::find($id);
         if($admin){
-            if($calificaciones){
-                $archivo = $calificaciones->archivo;
+            if($cohorte){
+                $archivo = $cohorte->archivo;
                 $archivo = public_path('excel/'.$archivo);
                 Excel::import(new CalificacionesImportMulti($id), $archivo); // Fix the undefined type error
-                $excelProcesar -> procesado = true;
-                $excelProcesar -> save();
-                $calificaciones -> save();
+                $cohorte->procesado = true;
+                $cohorte -> save();
                 return response()->json([
                     'success' => true,
                     'message' => 'Calificaciones procesadas correctamente'

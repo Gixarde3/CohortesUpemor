@@ -10,7 +10,10 @@ use Maatwebsite\Excel\Concerns\WithChunkReading; // Add this line
 use Maatwebsite\Excel\Concerns\WithValidation; // Add this line
 use Maatwebsite\Excel\Concerns\SkipsOnFailure; // Add this line
 use Maatwebsite\Excel\Validators\Failure;
-
+use App\Models\Grupo;
+use App\Models\Alumno;
+use App\Models\Profesor;
+use App\Models\Materia;
 class CalificacionesImport implements ToModel, WithHeadingRow, WithBatchInserts, WithChunkReading, WithValidation, SkipsOnFailure
 {
     /**
@@ -18,36 +21,48 @@ class CalificacionesImport implements ToModel, WithHeadingRow, WithBatchInserts,
     *
     * @return \Illuminate\Database\Eloquent\Model|null
     */
-    private $idCalificaciones;
-
-    public function __construct($idCalificaciones)
+    private $idCohorte;
+    public function __construct($idCohorte)
     {
-        $this->idCalificaciones = $idCalificaciones;
+        $this->idCohorte = $idCohorte;
     }
     public function model(array $row)
     {
         if(!isset($row['nombre_grupo'])){
             return null;
         }
+        $grupo = Grupo::firstOrCreate([
+            'clave' => $row['clave_grupo'],
+            'nombre' => $row['nombre_grupo'],
+            'letra' => $row['letra'],
+            'idCohorte' => $this->idCohorte
+        ]);
+        $alumno = Alumno::firstOrCreate([
+            'matricula' => $row['matricula'],
+            'apP' => $row['paterno_alumno'],
+            'apM' => $row['materno_alumno'],
+            'nombre' => $row['nombre_alumno'],
+            'activo' => $row['estado_alumno'] === "ACTIVO" ? true : false
+        ]);
+        $profesor = Profesor::firstOrCreate([
+            'apP' => $row['paterno_profesor'],
+            'apM' => $row['materno_profesor'],
+            'nombre' => $row['nombre_profesor']
+        ]);
+        $materia = Materia::firstOrCreate([
+            'clave' => $row['clave_materia'],
+            'nombre' => $row['nombre_materia'],
+            'plan' => $row['plan_estudios']
+        ]); 
+
         return new CalificacionProcesada([
-            //
-            'idCalificacionCuatrimestral' => $this->idCalificaciones,
-            'ClaveGrupo'     => $row['clave_grupo'],
-            'NombreGrupo'    => $row['nombre_grupo'], 
-            'LetraGrupo' => $row['letra'],
-            'PaternoProfesor' => $row['paterno_profesor'] ? $row['paterno_profesor'] : " ",
-            'MaternoProfesor' => $row['materno_profesor'] ? $row['materno_profesor'] : " ",
-            'NombreProfesor' => $row['nombre_profesor'] ? $row['nombre_profesor'] : " ",
-            'ClaveMateria' => $row['clave_materia'] ? $row['clave_materia'] : " ",
-            'NombreMateria' => $row['nombre_materia'],
-            'PlanEstudios' => $row['plan_estudios'],
-            'Matricula' => $row['matricula'],
-            'PaternoAlumno' => $row['paterno_alumno'] ? $row['paterno_alumno'] : " ",
-            'MaternoAlumno' => $row['materno_alumno'] ? $row['materno_alumno'] : " ",
-            'NombreAlumno' => $row['nombre_alumno'],
-            'EstadoAlumno' => $row['estado_alumno'],
-            'CalificacionAlumno' => $row['calificacion'],
-            'TipoCursamiento' => $row['tipo_cursamiento']
+            'idCohorte' => $this->idCohorte,
+            'idAlumno' => $alumno->id,
+            'idMateria' => $materia->id,
+            'idProfesor' => $profesor->id,
+            'idGrupo' => $grupo->id,
+            'calificacion' => $row['calificacion'],
+            'tipoCursamiento' => $row['tipo_cursamiento']
         ]);
     }
     public function headingRow(): int

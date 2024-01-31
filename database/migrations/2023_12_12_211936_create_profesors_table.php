@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('profesors', function (Blueprint $table) {
             $table->id();
-            $table->string('apP');
-            $table->string('apM');
-            $table->string('nombre');
+            $table->string('apP')->nullable();
+            $table->string('apM')->nullable();
+            $table->string('nombre')->nullable();
             $table->timestamps();
         });
     }
