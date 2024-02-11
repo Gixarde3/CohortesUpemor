@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CalificacionProcesada;
 use Illuminate\Http\Request;
 use App\Models\Usuario;
 use App\Models\Cohorte;
@@ -133,7 +134,11 @@ class CohorteController extends Controller
             $cohorte = Cohorte::find($id);
             if($cohorte){
                 $cohorte->archivo = $this->manejarArchivo($request->archivo);
+                $cohorte->procesado = false;
                 $cohorte->save();
+                CalificacionProcesada::where('idCohorte',$id)->delete();
+                $success = true;
+                $message = "Las calificaciones han sido subidas con éxito";
             }else{
                 $success = false;
                 $message = "No se encontró el cohorte con ese ID";
@@ -147,14 +152,19 @@ class CohorteController extends Controller
             'message' => $message
         ]);
     }
-    public function eliminarCalificacion(Request $request, $id){
+    public function eliminarCalificaciones(Request $request, $id){
         $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
         if ($admin) {
             $cohorte = Cohorte::find($id);
             if($cohorte){
+                $archivo = $cohorte->archivo;
+                $this->deleteFile($archivo);
                 $cohorte->archivo = null;
+                $cohorte->procesado = false;
                 $cohorte->save();
-                $this->deleteFile($request->archivo);
+                CalificacionProcesada::where('idCohorte',$id)->delete();
+                $success = true;
+                $message = "Las calificaciones han sido eliminadas con éxito";
             }else{
                 $success = false;
                 $message = "No se encontró el cohorte con ese ID";

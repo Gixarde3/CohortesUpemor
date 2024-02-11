@@ -38,12 +38,13 @@ class CalificacionesImport implements ToModel, WithHeadingRow, WithBatchInserts,
             'idCohorte' => $this->idCohorte
         ]);
         $alumno = Alumno::firstOrCreate([
-            'matricula' => $row['matricula'],
-            'apP' => $row['paterno_alumno'],
-            'apM' => $row['materno_alumno'],
-            'nombre' => $row['nombre_alumno'],
-            'activo' => $row['estado_alumno'] === "ACTIVO" ? true : false
+            'matricula' => $row['matricula']
         ]);
+        $alumno->apP = $row['paterno_alumno'];
+        $alumno->apM = $row['materno_alumno'];
+        $alumno->nombre = $row['nombre_alumno'];
+        $alumno->activo = $row['estado_alumno'] == "ACTIVO" ? true : false;
+        $alumno->save();
         $profesor = Profesor::firstOrCreate([
             'apP' => $row['paterno_profesor'],
             'apM' => $row['materno_profesor'],

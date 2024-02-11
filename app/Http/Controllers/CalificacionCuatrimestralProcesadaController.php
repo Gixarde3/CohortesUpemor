@@ -44,4 +44,32 @@ class CalificacionCuatrimestralProcesadaController extends Controller
             ]);
         }
     }
+    public function getAprobadosReprobados(Request $request, $id){
+        $cohorte = Cohorte::find($id);
+        if($cohorte){
+            if($cohorte->procesado == false){
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Las calificaciones no han sido procesadas'
+                ]);
+            }
+
+            $aprobados = CalificacionProcesada::where('calificacion', '>=', 7)
+                ->where('idCohorte', $id)
+                ->count();
+            $reprobados = CalificacionProcesada::where('calificacion', '<', 7)
+                ->where('idCohorte', $id)
+                ->count();
+            return response()->json([
+                'success' => true,
+                'aprobados' => $aprobados,
+                'reprobados' => $reprobados
+            ]);
+        }else{
+            return response()->json([
+                'success' => false,
+                'message' => 'No se encontraron calificaciones'
+            ]);
+        }
+    }
 }

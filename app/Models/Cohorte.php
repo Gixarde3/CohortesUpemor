@@ -18,4 +18,7 @@ class Cohorte extends Model
     public function calificacionProcesadas(){
         return $this->hasMany(CalificacionProcesada::class);
     }
+    public function bajas(){
+        return $this->hasMany(Baja::class);
+    }
 }

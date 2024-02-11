@@ -19,7 +19,7 @@ class UsuarioController extends Controller
             $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
             if ($admin) {
                 $this->validate($request, [
-                    'email' => 'required|email|unique:users'
+                    'email' => 'required|email|unique:usuarios'
                 ]);
                 $request->validate([
                     'foto'=>'required|image'

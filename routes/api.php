@@ -10,6 +10,8 @@ use App\Models\CalificacionCuatrimestral;
 use App\Http\Controllers\CalificacionCuatrimestralController;
 use App\Models\CalificacionCuatrimestralProcesada;
 use App\Http\Controllers\CalificacionCuatrimestralProcesadaController; // Import the missing class
+use App\Models\Baja;
+use App\Http\Controllers\BajaController; // Import the missing class
 
 /*
 |--------------------------------------------------------------------------
@@ -42,7 +44,7 @@ Route::controller(CohorteController::class)->group(function(){
     Route::post('cohorte/delete/{id}','deleteCohorte');
     Route::get('cohortes','getAllCohortes');
     Route::get('cohorte/{id}','getCohorteById');
-    Route::post('calificacion','subirCalificacion');
+    Route::post('calificacion/{id}','subirCalificacion');
     Route::post('calificacion/delete/{id}','eliminarCalificaciones');
     Route::get('calificacion/download/{fileName}','download');
 });
@@ -61,4 +63,15 @@ Route::controller(GrupoController::class)->group(function(){ // The undefined ty
 
 Route::controller(CalificacionCuatrimestralProcesadaController::class)->group(function(){
     Route::post('calificacion/procesar/{id}','importarExcel');
+    Route::get('calificacion/aprobados/{id}','getAprobadosReprobados');
+});
+
+Route::controller(BajaController::class)->group(function(){
+    Route::post('baja/{id}','crearBajas');
+    Route::post('baja/delete/{id}','eliminarBajas');
+    Route::post('baja/edit/{id}','actualizarBajas');
+    Route::get('bajas','getBajas');
+    Route::get('baja/{id}','getBajaById');
+    Route::post('baja/procesar/{id}','procesarBajas');
+    Route::get('baja/download/{id}','descargarBajas');
 });
