@@ -28,15 +28,35 @@ class CalificacionesImport implements ToModel, WithHeadingRow, WithBatchInserts,
     }
     public function model(array $row)
     {
+        $grado = null;
         if(!isset($row['nombre_grupo'])){
             return null;
+        }
+        if(strstr($row['nombre_grupo'], 'Grupo General')){
+            $grado = substr($row['nombre_grupo'], 14, 1);
+            $caracter = substr($row['nombre_grupo'], 15, 1);
+            if(ctype_digit($caracter)){
+                $grado = $grado . $caracter;
+            }
+        }else{
+            $grado = substr($row['nombre_grupo'], 0, 1);
+            if(ctype_digit($grado)){
+                $caracter = substr($row['nombre_grupo'], 1, 1);
+                if($caracter != $row['letra']){
+                    $grado = $grado . $caracter;
+                }
+            }else{
+                $grado = null;
+            }
         }
         $grupo = Grupo::firstOrCreate([
             'clave' => $row['clave_grupo'],
             'nombre' => $row['nombre_grupo'],
             'letra' => $row['letra'],
-            'idCohorte' => $this->idCohorte
+            'grado' => $grado
         ]);
+        $grupo->idCohorte = $this->idCohorte;
+        $grupo->save();
         $alumno = Alumno::firstOrCreate([
             'matricula' => $row['matricula']
         ]);

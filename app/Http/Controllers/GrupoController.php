@@ -20,11 +20,11 @@ class GrupoController extends Controller
             ]);
         }
         $newGrupo = new Grupo();
-        $newGrupo->grupo = $request->grupo;
+        $newGrupo->clave = $request->clave;
+        $newGrupo->nombre = $request->nombre;
+        $newGrupo->letra = $request->letra;
         $newGrupo->grado = $request->grado;
-        $newGrupo->periodo = $request->periodo;
-        $newGrupo->fecha = $request->fecha;
-        $newGrupo->idCreador = $admin->id;
+        $newGrupo->idCohorte = $request->cohorte;
         $newGrupo->save();
         $success = true;
         $message = 'Grupo creado correctamente';
@@ -45,11 +45,11 @@ class GrupoController extends Controller
         }
         $grupo = Grupo::find($id);
         if($grupo){
-            $grupo->grupo = $request->grupo;
+            $grupo->clave = $request->clave;
+            $grupo->nombre = $request->nombre;
+            $grupo->letra = $request->letra;
             $grupo->grado = $request->grado;
-            $grupo->periodo = $request->periodo;
-            $grupo->fecha = $request->fecha;
-            $grupo->idCreador = $admin->id;
+            $grupo->idCohorte = $request->cohorte;
             $grupo->save();
             $success = true;
             $message = 'Grupo editado correctamente';
@@ -87,16 +87,7 @@ class GrupoController extends Controller
         ]);
     }
     public function getGrupos(Request $request){
-        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
-        if (!$admin) {
-            $success = false;
-            $message = "No cuentas con los permisos necesarios";
-            return response()->json([
-                'success' => $success,
-                'message' => $message
-            ]);
-        }
-        $grupos = Grupo::all();
+        $grupos = Grupo::join('cohortes','grupos.idCohorte','=','cohortes.id')->select('grupos.*','cohortes.plan as cohorte')->get();
         $success = true;
         $message = 'Grupos obtenidos correctamente';
         return response()->json([
@@ -106,7 +97,7 @@ class GrupoController extends Controller
         ]);
     }
     public function getGrupoById(Request $request, $id){
-        $grupo = Grupo::find($id);
+        $grupo = Grupo::join('cohortes','grupos.idCohorte','=','cohortes.id')->select('grupos.*','cohortes.plan as cohorte')->where('grupos.id',$id)->first();
         if($grupo){
             $success = true;
             $message = 'Grupo obtenido correctamente';
@@ -121,7 +112,7 @@ class GrupoController extends Controller
         ]);
     }
     public function getGruposByGrado(Request $request, $grado){
-        $grupos = Grupo::where('grado',$grado)->get();
+        $grupos = Grupo::join('cohortes','grupos.idCohorte','=','cohortes.id')->select('grupos.*','cohortes.plan as cohorte')->where('grupos.grado',$grado)->get();
         $success = true;
         $message = 'Grupos obtenidos correctamente';
         return response()->json([
@@ -130,8 +121,8 @@ class GrupoController extends Controller
             'grupos' => $grupos
         ]);
     }
-    public function getGruposByPeriodo(Request $request, $periodo){
-        $grupos = Grupo::where('periodo',$periodo)->get();
+    public function getGruposByLetra(Request $request, $letra){
+        $grupos = Grupo::join('cohortes','grupos.idCohorte','=','cohortes.id')->select('grupos.*','cohortes.plan as cohorte')->where('grupos.letra',$letra)->get();
         $success = true;
         $message = 'Grupos obtenidos correctamente';
         return response()->json([
@@ -140,8 +131,8 @@ class GrupoController extends Controller
             'grupos' => $grupos
         ]);
     }
-    public function getGruposByGrupo(Request $request, $grupo){
-        $grupos = Grupo::where('grupo',$grupo)->get();
+    public function getGruposByCohorte(Request $request, $cohorte){
+        $grupos = Grupo::join('cohortes','grupos.idCohorte','=','cohortes.id')->select('grupos.*','cohortes.plan as cohorte')->where('cohortes.plan',$cohorte)->get();
         $success = true;
         $message = 'Grupos obtenidos correctamente';
         return response()->json([
@@ -150,8 +141,18 @@ class GrupoController extends Controller
             'grupos' => $grupos
         ]);
     }
-    public function getGruposByFecha(Request $request, $fecha){
-        $grupos = Grupo::where('fecha',$fecha)->get();
+    public function getGruposByClave(Request $request, $clave){
+        $grupos = Grupo::join('cohortes','grupos.idCohorte','=','cohortes.id')->select('grupos.*','cohortes.plan as cohorte')->where('grupos.clave',$clave)->get();
+        $success = true;
+        $message = 'Grupos obtenidos correctamente';
+        return response()->json([
+            'success' => $success,
+            'message' => $message,
+            'grupos' => $grupos
+        ]);
+    }
+    public function getGruposByNombre(Request $request, $nombre){
+        $grupos = Grupo::join('cohortes','grupos.idCohorte','=','cohortes.id')->select('grupos.*','cohortes.plan as cohorte')->where('grupos.nombre',$nombre)->get();
         $success = true;
         $message = 'Grupos obtenidos correctamente';
         return response()->json([

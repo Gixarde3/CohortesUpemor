@@ -11,14 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('grupos', function (Blueprint $table) {
+        Schema::create('razons', function (Blueprint $table) {
             $table->id();
-            $table->string('clave');
             $table->string('nombre');
-            $table->string('letra',1);
-            $table->integer('grado')->nullable();
-            $table->unsignedBigInteger('idCohorte')->nullable();
-            $table->foreign('idCohorte')->references('id')->on('cohortes')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -28,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('grupos');
+        Schema::dropIfExists('razons');
     }
 };

@@ -2,15 +2,10 @@
 
 use App\Http\Controllers\CohorteController;
 use App\Http\Controllers\GrupoController; // Import the missing class
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\LoginController;
-use App\Models\CalificacionCuatrimestral;
-use App\Http\Controllers\CalificacionCuatrimestralController;
-use App\Models\CalificacionCuatrimestralProcesada;
-use App\Http\Controllers\CalificacionCuatrimestralProcesadaController; // Import the missing class
-use App\Models\Baja;
+use App\Http\Controllers\CalificacionProcesadaController; // Import the missing class
 use App\Http\Controllers\BajaController; // Import the missing class
 
 /*
@@ -55,15 +50,17 @@ Route::controller(GrupoController::class)->group(function(){ // The undefined ty
     Route::post('grupo/delete/{id}','eliminarGrupo');
     Route::get('grupos','getGrupos');
     Route::get('grupo/{id}','getGrupoById');
-    Route::get('grupo/grado/{grado}','getGrupoByGrado');
-    Route::get('grupo/periodo/{periodo}','getGrupoByPeriodo');
-    Route::get('grupo/grupo/{grupo}','getGrupoByGrupo');
-    Route::get('grupo/fecha/{fecha}','getGrupoByFecha');
+    Route::get('grupo/grado/{grado}','getGruposByGrado');
+    Route::get('grupo/letra/{letra}','getGruposByLetra');
+    Route::get('grupo/cohorte/{cohorte}','getGruposByCohorte');
+    Route::get('grupo/nombre/{nombre}','getGruposByNombre');
+    Route::get('grupo/clave/{clave}','getGruposByClave');
 });
 
-Route::controller(CalificacionCuatrimestralProcesadaController::class)->group(function(){
+Route::controller(CalificacionProcesadaController::class)->group(function(){
     Route::post('calificacion/procesar/{id}','importarExcel');
     Route::get('calificacion/aprobados/{id}','getAprobadosReprobados');
+    Route::get('calificacion/matriculas/{id}','getAniosInMatriculas');
 });
 
 Route::controller(BajaController::class)->group(function(){

@@ -21,7 +21,7 @@ class CohorteController extends Controller
 
     public function createCohorte(Request $request){
 
-        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+        $admin = Usuario::where('token',$request->token)->first();
         if ($admin) {
             $newCohorte = new Cohorte();
             $newCohorte->periodo = $request->periodo;
@@ -29,16 +29,20 @@ class CohorteController extends Controller
             $newCohorte->plan = $request->plan;
             $newCohorte->idCreador = $admin->id;
             $newCohorte->save();
+            $id = $newCohorte->id;
             $success = true;
             $message = 'Cohorte registrado correctamente';
         }else{
+            $id = null;
             $success = false;
             $message = "No cuentas con los permisos necesarios";
         }
         
         return response()->json([
             'success'=> $success,
-            'message'=>$message
+            'message'=>$message,
+            'cohorte'=>$id,
+            'token'=>$request->token
         ]);
     }
     

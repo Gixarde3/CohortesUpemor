@@ -11,7 +11,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Models\CalificacionProcesada; // Import the missing class
 use App\Imports\CalificacionesImportMulti; // Import the missing class
 use App\Models\Cohorte; // Import the missing class
-class CalificacionCuatrimestralProcesadaController extends Controller
+class CalificacionProcesadaController extends Controller
 {
     /**
      * Importa un archivo de excel con las calificaciones de un grupo.
@@ -64,6 +64,25 @@ class CalificacionCuatrimestralProcesadaController extends Controller
                 'success' => true,
                 'aprobados' => $aprobados,
                 'reprobados' => $reprobados
+            ]);
+        }else{
+            return response()->json([
+                'success' => false,
+                'message' => 'No se encontraron calificaciones'
+            ]);
+        }
+    }
+    public function getAniosInMatriculas(Request $request, $id){
+        $cohorte = Cohorte::find($id);
+        if($cohorte){
+            $resultados = CalificacionProcesada::selectRaw('count(*) as cantidad, SUBSTRING(alumnos.matricula, 5, 2) as anio')
+                ->join('alumnos', 'alumnos.id', '=', 'calificacion_procesadas.idAlumno')
+                ->where('calificacion_procesadas.idCohorte', 1)
+                ->groupByRaw('SUBSTRING(alumnos.matricula, 5, 2)')
+                ->get();
+            return response()->json([
+                'success' => true,
+                'anios' => $resultados
             ]);
         }else{
             return response()->json([

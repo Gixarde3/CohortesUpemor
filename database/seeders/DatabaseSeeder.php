@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Baja;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -32,11 +34,18 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\Cohorte::factory()->create([
-            'periodo' => 'P',
+            'periodo' => 'I',
             'anio' => 2024,
             'plan' => 'ITI H2024',
             'archivo' => '65a0b0bd90fdc.xlsx',
             'idCreador' => 1
+        ]);
+
+        \App\Models\Baja::factory()->create([
+            'idUsuario' => 1,
+            'archivo' => '65d94a4c447a1.xlsx',
+            'procesado' => 0,
+            'idCohorte' => '1'
         ]);
     }
 }

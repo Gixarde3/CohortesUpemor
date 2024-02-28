@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('idBaja');
             $table->unsignedBigInteger('idAlumno');
             $table->boolean('bajaDefinitiva');
-            $table->text('motivo');
+            $table->text('observaciones')->nullable();
             $table->foreign('idBaja')->references('id')->on('bajas');
             $table->foreign('idAlumno')->references('id')->on('alumnos');
             $table->timestamps();
