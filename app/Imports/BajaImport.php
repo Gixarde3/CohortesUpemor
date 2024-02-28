@@ -46,7 +46,7 @@ class BajaImport implements ToCollection, WithHeadingRow, WithBatchInserts, With
             ]);
             
             $razones = $row['motivo_de_bajas'];
-            $divisores = [">", " y "];
+            $divisores = [">", " y ", " e "];
             $razones = str_replace($divisores, $divisores[0], $razones);
             $razones = explode($divisores[0], $razones);
             foreach ($razones as $razon) {
@@ -56,6 +56,44 @@ class BajaImport implements ToCollection, WithHeadingRow, WithBatchInserts, With
                     $observacion = explode(",", $nuevaRazon);
                     $nuevaRazon = "DESEO CAMBIARME A OTRA INSTITUCION";
                     $observaciones = $observacion[count($observacion) - 1];
+                }
+                if(strstr($nuevaRazon, "ACUMULé CUATRO ASIGNATURAS O MáS REPROBADAS EN CUATRIMESTRES ANTERIORES")){
+                    $observacion = explode("(", $nuevaRazon);
+                    $nuevaRazon = "ACUMULé CUATRO ASIGNATURAS O MáS REPROBADAS EN CUATRIMESTRES ANTERIORES";
+                    $observaciones = "(".$observacion[count($observacion) - 1];
+                }
+                if(strstr($nuevaRazon, "FALTA DE PAGO")){
+                    $nuevaRazon = "FALTA DE PAGO";
+                }
+                if(strstr($nuevaRazon, "PRóRROGA")){
+                    $nuevaRazon = "INCUMPLIMIENTO DE PRóRROGA";
+                }
+                if(strstr($nuevaRazon, "CARRERA")){
+                    $nuevaRazon = "CAMBIO DE CARRERA";
+                }
+                if(strstr($nuevaRazon, "DOMICILIO")){
+                    $nuevaRazon = "CAMBIO DE DOMICILIO";
+                }
+                if(strstr($nuevaRazon, "ECONóMICOS") || strstr($nuevaRazon, "DINERO") || strstr($nuevaRazon, "GASTOS")){
+                    $nuevaRazon = "MOTIVOS ECONóMICOS";
+                }
+                if(strstr($nuevaRazon, "FAMILIARES")){
+                    $nuevaRazon = "MOTIVOS FAMILIARES";
+                }
+                if(strstr($nuevaRazon, "PERSONALES")){
+                    $nuevaRazon = "MOTIVOS PERSONALES";
+                }
+                if(strstr($nuevaRazon, "BAJA TEMPORAL")){
+                    $nuevaRazon = "NO REGRESÓ DE BAJA TEMPORAL";
+                }
+                if(strstr($nuevaRazon, "REACTIVACIóN")){
+                    $nuevaRazon = "REACTIVACIóN POR OFICIO UPEMOR";
+                }
+                if(strstr($nuevaRazon, "HORARIOS")){
+                    $nuevaRazon = "HORARIOS INCOMPATIBLES";
+                }
+                if(strstr($nuevaRazon, "MATERIAS") || str($nuevaRazon, "ASIGNATURAS")){
+                    $nuevaRazon = "EXCESO DE MATERIAS REPROBADAS POR CUATRIMESTRE O ACUMULADAS";
                 }
                 $bajaProcesada->observaciones = $observaciones;
                 $bajaProcesada->save();

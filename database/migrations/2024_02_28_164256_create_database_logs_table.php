@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('razon_bajas', function (Blueprint $table) {
+        Schema::create('database_logs', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('idBajaProcesada');
-            $table->unsignedBigInteger('idRazon');
+            $table->unsignedBigInteger('idUsuario');
+            $table->string('operation');
+            $table->date('date');
+            $table->foreign('idUsuario')->references('id')->on('usuarios')->onDelete('cascade');
             $table->timestamps();
-            $table->foreign('idBajaProcesada')->references('id')->on('baja_procesadas')->onDelete('cascade');
-            $table->foreign('idRazon')->references('id')->on('razons')->onDelete('cascade');
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('razon_bajas');
+        Schema::dropIfExists('database_logs');
     }
 };

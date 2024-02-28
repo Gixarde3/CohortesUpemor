@@ -93,7 +93,7 @@ class GrupoController extends Controller
         return response()->json([
             'success' => $success,
             'message' => $message,
-            'grupos' => $grupos
+            'resultados' => $grupos
         ]);
     }
     public function getGrupoById(Request $request, $id){
@@ -108,7 +108,7 @@ class GrupoController extends Controller
         return response()->json([
             'success' => $success,
             'message' => $message,
-            'grupo' => $grupo
+            'resultados' => $grupo
         ]);
     }
     public function getGruposByGrado(Request $request, $grado){
@@ -118,7 +118,7 @@ class GrupoController extends Controller
         return response()->json([
             'success' => $success,
             'message' => $message,
-            'grupos' => $grupos
+            'resultados' => $grupos
         ]);
     }
     public function getGruposByLetra(Request $request, $letra){
@@ -128,7 +128,7 @@ class GrupoController extends Controller
         return response()->json([
             'success' => $success,
             'message' => $message,
-            'grupos' => $grupos
+            'resultados' => $grupos
         ]);
     }
     public function getGruposByCohorte(Request $request, $cohorte){
@@ -138,7 +138,7 @@ class GrupoController extends Controller
         return response()->json([
             'success' => $success,
             'message' => $message,
-            'grupos' => $grupos
+            'resultados' => $grupos
         ]);
     }
     public function getGruposByClave(Request $request, $clave){
@@ -148,7 +148,7 @@ class GrupoController extends Controller
         return response()->json([
             'success' => $success,
             'message' => $message,
-            'grupos' => $grupos
+            'resultados' => $grupos
         ]);
     }
     public function getGruposByNombre(Request $request, $nombre){
@@ -158,7 +158,7 @@ class GrupoController extends Controller
         return response()->json([
             'success' => $success,
             'message' => $message,
-            'grupos' => $grupos
+            'resultados' => $grupos
         ]);
     }
 }

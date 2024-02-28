@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('archivo');
             $table->boolean('procesado')->default(false);
             $table->unsignedBigInteger('idCohorte');
-            $table->foreign('idUsuario')->references('id')->on('usuarios');
-            $table->foreign('idCohorte')->references('id')->on('cohortes');
+            $table->foreign('idUsuario')->references('id')->on('usuarios')->onDelete('cascade');
+            $table->foreign('idCohorte')->references('id')->on('cohortes')->onDelete('cascade');
             $table->timestamps();
         });
     }

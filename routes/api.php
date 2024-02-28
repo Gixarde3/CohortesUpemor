@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\CohorteController;
 use App\Http\Controllers\GrupoController; // Import the missing class
 use Illuminate\Support\Facades\Route;
@@ -71,4 +72,12 @@ Route::controller(BajaController::class)->group(function(){
     Route::get('baja/{id}','getBajaById');
     Route::post('baja/procesar/{id}','procesarBajas');
     Route::get('baja/download/{id}','descargarBajas');
+});
+
+Route::controller(BackupController::class)->group(function(){
+    Route::post('backup','uploadBackup');
+    Route::get('backups','searchGeneral');
+    Route::get('backup/nombre/{username}','searchByName');
+    Route::get('backup/fecha/{date}','searchByDate');
+    Route::get('backup/download/{token}','backupDownload');
 });
