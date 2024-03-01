@@ -6,9 +6,7 @@ use App\Models\CalificacionProcesada;
 use Illuminate\Http\Request;
 use App\Models\Usuario;
 use App\Models\Cohorte;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
-
+use App\Models\Alumno;
 class CohorteController extends Controller
 {
     
@@ -107,6 +105,7 @@ class CohorteController extends Controller
     public function getAllCohortes(Request $request){
         $cohortes = Cohorte::all();
         $success = true;
+
         $message = 'Cohortes obtenidos correctamente';
         return response()->json([
             'success'=> $success,
@@ -131,96 +130,5 @@ class CohorteController extends Controller
             'cohorte'=>$cohorte,
             'message'=>$message
         ]);
-    }
-    public function subirCalificacion(Request $request, $id){
-        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
-        if ($admin) {
-            $cohorte = Cohorte::find($id);
-            if($cohorte){
-                $cohorte->archivo = $this->manejarArchivo($request->archivo);
-                $cohorte->procesado = false;
-                $cohorte->save();
-                CalificacionProcesada::where('idCohorte',$id)->delete();
-                $success = true;
-                $message = "Las calificaciones han sido subidas con éxito";
-            }else{
-                $success = false;
-                $message = "No se encontró el cohorte con ese ID";
-            }
-        } else {
-            $success = false;
-            $message = "No cuentas con los permisos necesarios";
-        }
-        return response()->json([
-            'success' => $success,
-            'message' => $message
-        ]);
-    }
-    public function eliminarCalificaciones(Request $request, $id){
-        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
-        if ($admin) {
-            $cohorte = Cohorte::find($id);
-            if($cohorte){
-                $archivo = $cohorte->archivo;
-                $this->deleteFile($archivo);
-                $cohorte->archivo = null;
-                $cohorte->procesado = false;
-                $cohorte->save();
-                CalificacionProcesada::where('idCohorte',$id)->delete();
-                $success = true;
-                $message = "Las calificaciones han sido eliminadas con éxito";
-            }else{
-                $success = false;
-                $message = "No se encontró el cohorte con ese ID";
-            }
-        } else {
-            $success = false;
-            $message = "No cuentas con los permisos necesarios";
-        }
-        return response()->json([
-            'success' => $success,
-            'message' => $message
-        ]);
-    }
-    public function downloadCalificacion(Request $request, $id){
-        $cohorte = Cohorte::find($id);
-        if($cohorte){
-            return $this->download($request, $cohorte->archivo);
-        }else{
-            return response()->json([
-                'success' => false,
-                'message' => "No se encontró el cohorte con ese ID"
-            ]);
-        }
-    }
-    public function manejarArchivo($file)
-    {
-        $nameFile = uniqid();
-        $extensionFile = '.' . $file->getClientOriginalExtension();
-        $file->storeAs('public/', $nameFile . $extensionFile);
-        $storageRoute = storage_path('app/public/' . $nameFile . $extensionFile);
-        $publicRoute = public_path('excel/' . $nameFile . $extensionFile);
-        File::move($storageRoute, $publicRoute);
-        Storage::delete($storageRoute);
-        return $nameFile . $extensionFile;
-    }
-    public function download(Request $request, $filename)
-    {
-        // Define la ruta al archivo dentro de la carpeta de almacenamiento (por ejemplo, en la carpeta "public")
-        $rutaArchivo = public_path('excel/'.$filename);
-
-        // Obtén el archivo como una respuesta
-        return response()->file($rutaArchivo, ['Content-Disposition' => 'attachment; filename="' . $filename . '"']);
-    }
-
-    public function deleteFile($fileName)
-    {
-        $filePath = public_path('excel/' . $fileName);
-        if (file_exists($filePath)) {
-            unlink($filePath);
-            return true;
-        } else {
-            return false;
-        }
     }
 }

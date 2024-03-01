@@ -8,6 +8,9 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\CalificacionProcesadaController; // Import the missing class
 use App\Http\Controllers\BajaController; // Import the missing class
+use App\Http\Controllers\BajaProcesadaController;
+use App\Http\Controllers\CalificacionController;
+use App\Models\Calificacion;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,10 +43,8 @@ Route::controller(CohorteController::class)->group(function(){
     Route::post('cohorte/delete/{id}','deleteCohorte');
     Route::get('cohortes','getAllCohortes');
     Route::get('cohorte/{id}','getCohorteById');
-    Route::post('calificacion/{id}','subirCalificacion');
-    Route::post('calificacion/delete/{id}','eliminarCalificaciones');
-    Route::get('calificacion/download/{fileName}','download');
 });
+
 
 Route::controller(GrupoController::class)->group(function(){ // The undefined type 'GrupoController' is now defined
     Route::post('grupo','crearGrupo');
@@ -58,20 +59,33 @@ Route::controller(GrupoController::class)->group(function(){ // The undefined ty
     Route::get('grupo/clave/{clave}','getGruposByClave');
 });
 
+Route::controller(CalificacionController::class)->group(function(){
+    Route::post('calificacion','subirCalificacion');
+    Route::get('calificaciones','getCalificaciones');
+    Route::post('calificacion/delete/{id}','eliminarCalificaciones');
+    Route::post('calificacion/edit/{id}','editarCalificaciones');
+    Route::get('calificacion/download/{fileName}','download');
+    Route::get('calificacion/{id}', 'getCalificacionById');
+});
+
 Route::controller(CalificacionProcesadaController::class)->group(function(){
     Route::post('calificacion/procesar/{id}','importarExcel');
     Route::get('calificacion/aprobados/{id}','getAprobadosReprobados');
     Route::get('calificacion/matriculas/{id}','getAniosInMatriculas');
+    Route::get('califcaciones','getCalificaciones');
+    Route::get('cohorte/calificaciones/{idCohorte}','getMateriasMasReprobadasByCohorte');
+    
 });
 
 Route::controller(BajaController::class)->group(function(){
-    Route::post('baja/{id}','crearBajas');
+    Route::post('baja','crearBajas');
     Route::post('baja/delete/{id}','eliminarBajas');
     Route::post('baja/edit/{id}','actualizarBajas');
     Route::get('bajas','getBajas');
     Route::get('baja/{id}','getBajaById');
     Route::post('baja/procesar/{id}','procesarBajas');
     Route::get('baja/download/{id}','descargarBajas');
+    
 });
 
 Route::controller(BackupController::class)->group(function(){
@@ -80,4 +94,8 @@ Route::controller(BackupController::class)->group(function(){
     Route::get('backup/nombre/{username}','searchByName');
     Route::get('backup/fecha/{date}','searchByDate');
     Route::get('backup/download/{token}','backupDownload');
+});
+Route::controller(BajaProcesadaController::class)->group(function(){
+    Route::get('cohorte/bajas/periodos/{idCohorte}','getBajasByPeriodo');
+    Route::get('cohorte/bajas/{idCohorte}','getBajas');
 });

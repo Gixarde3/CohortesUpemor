@@ -16,8 +16,6 @@ return new class extends Migration
             $table->string('periodo');
             $table->year('anio');
             $table->string('plan');
-            $table->string('archivo')->nullable();
-            $table->boolean('procesado')->default(false);
             $table->unsignedBigInteger('idCreador');
             $table->foreign('idCreador')->references('id')->on('usuarios')->onDelete('cascade');
             $table->timestamps();

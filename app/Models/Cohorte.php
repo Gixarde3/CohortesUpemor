@@ -9,16 +9,12 @@ class Cohorte extends Model
 {
     use HasFactory;
     protected $fillable = [
-
+        'periodo',
+        'anio',
+        'plan',
+        'idCreador'
     ];
-
-    public function usuarios(){
-        return $this->belongsTo(Usuario::class);
-    }
-    public function calificacionProcesadas(){
-        return $this->hasMany(CalificacionProcesada::class);
-    }
-    public function bajas(){
-        return $this->hasMany(Baja::class);
+    public function alumnos(){
+        return $this->hasMany(Alumno::class);
     }
 }

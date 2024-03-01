@@ -7,16 +7,17 @@ use App\Imports\CalificacionesImport; // Add this line
 class CalificacionesImportMulti implements WithMultipleSheets 
 {
     private $idCalificaciones;
-
-    public function __construct($idCalificaciones)
+    private $idCreador;
+    public function __construct($idCreador, $idCalificaciones)
     {
+        $this->idCreador = $idCreador;
         $this->idCalificaciones = $idCalificaciones;
     }
 
     public function sheets(): array
     {
         return [
-            new CalificacionesImport($this->idCalificaciones),
+            new CalificacionesImport($this->idCreador, $this->idCalificaciones),
         ];
     }
 }

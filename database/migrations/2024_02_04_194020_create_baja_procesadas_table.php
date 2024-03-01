@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('idBaja');
             $table->unsignedBigInteger('idAlumno');
             $table->boolean('bajaDefinitiva');
+            $table->string('periodo');
             $table->text('observaciones')->nullable();
             $table->foreign('idBaja')->references('id')->on('bajas')->onDelete('cascade');
             $table->foreign('idAlumno')->references('id')->on('alumnos')->onDelete('cascade');

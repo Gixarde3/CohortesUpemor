@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bajas', function (Blueprint $table) {
+        Schema::create('cenevals', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('idUsuario');
-            $table->string('archivo');
-            $table->boolean('procesado')->default(false);
-            $table->string('periodo');
-            $table->foreign('idUsuario')->references('id')->on('usuarios')->onDelete('cascade');
+            $table->foreignId('idAspirante')->constrained('aspirantes');
+            $table->boolean('pagado');
+            $table->string('folio');
+            $table->date('fecha');
+            $table->integer('calificacion');
+            $table->boolean('estado');
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bajas');
+        Schema::dropIfExists('cenevals');
     }
 };

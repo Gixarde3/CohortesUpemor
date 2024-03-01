@@ -12,6 +12,7 @@ class BajaProcesada extends Model
         "idBaja",
         "idAlumno",
         "bajaDefinitiva",
-        "motivo"
+        "motivo",
+        "periodo"
     ];
 }

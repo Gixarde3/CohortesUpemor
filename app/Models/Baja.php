@@ -14,7 +14,7 @@ class Baja extends Model
         "idBaja",
         "idAlumno",
         "fecha",
-        "motivo"
+        "motivo",
     ];
     public function bajasProcesadas(){
         return $this->hasMany(BajaProcesada::class);

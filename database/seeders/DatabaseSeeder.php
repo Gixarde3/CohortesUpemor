@@ -37,15 +37,21 @@ class DatabaseSeeder extends Seeder
             'periodo' => 'I',
             'anio' => 2024,
             'plan' => 'ITI H2024',
-            'archivo' => '65a0b0bd90fdc.xlsx',
             'idCreador' => 1
         ]);
 
+        \App\Models\Calificacion::factory()->create([
+            'archivo' => '65a80b5f55e66.xlsx',
+            'idCreador' => 1,
+            'carrera' => 'ITI',
+            'periodo' => 'I',
+            'anio' => 2024
+        ]);
         \App\Models\Baja::factory()->create([
             'idUsuario' => 1,
-            'archivo' => '65d94a4c447a1.xlsx',
+            'archivo' => '65bfeff33b96e.xlsx',
             'procesado' => 0,
-            'idCohorte' => '1'
+            'periodo'=> 'I2024',
         ]);
     }
 }

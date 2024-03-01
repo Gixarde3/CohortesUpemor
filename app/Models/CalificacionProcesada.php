@@ -9,13 +9,13 @@ class CalificacionProcesada extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'idCohorte',
         'idAlumno',
         'idMateria',
         'idProfesor',
         'idGrupo',
         'calificacion',
-        'tipoCursamiento'
+        'tipoCursamiento',
+        'idCalificacion'
     ];
     public function alumnos(){
         return $this->belongsTo(Alumno::class);

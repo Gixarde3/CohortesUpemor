@@ -16,9 +16,8 @@ return new class extends Migration
             $table->string('clave');
             $table->string('nombre');
             $table->string('letra',1);
+            $table->string('periodo');
             $table->integer('grado')->nullable();
-            $table->unsignedBigInteger('idCohorte')->nullable();
-            $table->foreign('idCohorte')->references('id')->on('cohortes')->onDelete('cascade');
             $table->timestamps();
         });
     }

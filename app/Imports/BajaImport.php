@@ -13,6 +13,7 @@ use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading; // Add this line
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Validators\Failure;
+use App\Models\Cohorte;
 use Illuminate\Support\Collection;
 
 class BajaImport implements ToCollection, WithHeadingRow, WithBatchInserts, WithChunkReading, WithValidation, SkipsOnFailure
@@ -25,17 +26,48 @@ class BajaImport implements ToCollection, WithHeadingRow, WithBatchInserts, With
 
     private $idBaja;
     private $periodo;
-    public function __construct($idBaja, $periodo)
+    private $idCreador;
+    public function __construct($idBaja, $periodo, $idCreador)
     {
         $this->idBaja = $idBaja;
         $this->periodo = $periodo;
+        $this->idCreador = $idCreador;
     }
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) 
         {
+            $carrera = $row['carrera'];
+            if($carrera == "INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN"){
+                $carrera = "ITI";
+            }
+            if($carrera == "INGENIERÍA EN BIOTECNOLOGÍA"){
+                $carrera = "IBT";
+            }
+            if($carrera == "INGENIERÍA TECNOLOGÍA AMBIENTAL"){
+                $carrera = "ITA";
+            }
+            if($carrera == "INGENIERÍA EN FINANZAS"){
+                $carrera = "IFI";
+            }
+            if($carrera == "INGENIERÍA INDUSTRIAL"){
+                $carrera = "IIN";
+            }
+            if($carrera == "LICENCIATURA EN ADMINISTRACIÓN Y GESTIÓN EMPRESARIAL"){
+                $carrera = "LAE";
+            }
+            if($carrera == "INGENIERÍA EN ELECTRÓNICA Y TELECOMUNICACIONES"){
+                $carrera = "IET";
+            }
+            $cohorte = Cohorte::firstOrCreate([
+                'periodo' => 'O',
+                'anio' => "20".substr($row['matricula'], 4,2),
+                'plan' => $carrera." H".substr($row['matricula'], 4,2),
+                'idCreador' => $this->idCreador
+            ]);
             $alumno = Alumno::firstOrCreate([
-                'matricula' => $row['matricula']
+                'matricula' => $row['matricula'],
+                'idCohorte' => $cohorte->id
             ]);
             $alumno->activo = false;
             $alumno->save();
@@ -43,6 +75,7 @@ class BajaImport implements ToCollection, WithHeadingRow, WithBatchInserts, With
                 'idBaja' => $this->idBaja,
                 'idAlumno' => $alumno->id,
                 'bajaDefinitiva' => $row[strtolower('cierre_'.$this->periodo)] == "Baja Definitiva" ? true : false,
+                'periodo' => $row['periodo']
             ]);
             
             $razones = $row['motivo_de_bajas'];

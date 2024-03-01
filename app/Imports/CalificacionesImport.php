@@ -14,6 +14,7 @@ use App\Models\Grupo;
 use App\Models\Alumno;
 use App\Models\Profesor;
 use App\Models\Materia;
+use App\Models\Cohorte;
 class CalificacionesImport implements ToModel, WithHeadingRow, WithBatchInserts, WithChunkReading, WithValidation, SkipsOnFailure
 {
     /**
@@ -21,10 +22,11 @@ class CalificacionesImport implements ToModel, WithHeadingRow, WithBatchInserts,
     *
     * @return \Illuminate\Database\Eloquent\Model|null
     */
-    private $idCohorte;
-    public function __construct($idCohorte)
-    {
-        $this->idCohorte = $idCohorte;
+    private $idCreador;
+    private $idCalificacion;
+    public function __construct($idCreador, $idCalificacion){
+        $this->idCreador = $idCreador;
+        $this->idCalificacion = $idCalificacion;
     }
     public function model(array $row)
     {
@@ -53,12 +55,18 @@ class CalificacionesImport implements ToModel, WithHeadingRow, WithBatchInserts,
             'clave' => $row['clave_grupo'],
             'nombre' => $row['nombre_grupo'],
             'letra' => $row['letra'],
-            'grado' => $grado
+            'grado' => $grado,
+            'periodo' => explode("-", $row['clave_grupo'])[1]
         ]);
-        $grupo->idCohorte = $this->idCohorte;
-        $grupo->save();
+        $cohorte = Cohorte::firstOrCreate([
+            'periodo' => 'O',
+            'anio' => "20".substr($row['matricula'], 4,2),
+            'plan' => substr($row['plan_estudios'],0,3)." H".substr($row['matricula'], 4,2),
+            'idCreador' => $this->idCreador
+        ]);
         $alumno = Alumno::firstOrCreate([
-            'matricula' => $row['matricula']
+            'matricula' => $row['matricula'],
+            'idCohorte' => $cohorte->id,
         ]);
         $alumno->apP = $row['paterno_alumno'];
         $alumno->apM = $row['materno_alumno'];
@@ -77,11 +85,11 @@ class CalificacionesImport implements ToModel, WithHeadingRow, WithBatchInserts,
         ]); 
 
         return new CalificacionProcesada([
-            'idCohorte' => $this->idCohorte,
             'idAlumno' => $alumno->id,
             'idMateria' => $materia->id,
             'idProfesor' => $profesor->id,
             'idGrupo' => $grupo->id,
+            'idCalificacion' => $this->idCalificacion,
             'calificacion' => $row['calificacion'],
             'tipoCursamiento' => $row['tipo_cursamiento']
         ]);

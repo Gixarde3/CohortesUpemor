@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('apP')->nullable();
             $table->string('apM')->nullable();
             $table->string('nombre')->nullable();
+            $table->foreignId('idCohorte')->nullable()->constrained('cohortes');
             $table->boolean('activo')->default(true);
             $table->timestamps();
         });

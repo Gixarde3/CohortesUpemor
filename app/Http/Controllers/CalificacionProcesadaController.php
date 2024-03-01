@@ -10,7 +10,7 @@ use App\Models\Usuario;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\CalificacionProcesada; // Import the missing class
 use App\Imports\CalificacionesImportMulti; // Import the missing class
-use App\Models\Cohorte; // Import the missing class
+use App\Models\Calificacion; // Import the missing class
 class CalificacionProcesadaController extends Controller
 {
     /**
@@ -19,14 +19,14 @@ class CalificacionProcesadaController extends Controller
      */
     public function importarExcel(Request $request, $id){
         $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
-        $cohorte = Cohorte::find($id);
+        $calificacion = Calificacion::find($id);
         if($admin){
-            if($cohorte){
-                $archivo = $cohorte->archivo;
+            if($calificacion){
+                $archivo = $calificacion->archivo;
                 $archivo = public_path('excel/'.$archivo);
-                Excel::import(new CalificacionesImportMulti($id), $archivo); // Fix the undefined type error
-                $cohorte->procesado = true;
-                $cohorte -> save();
+                Excel::import(new CalificacionesImportMulti($admin->id, $calificacion->id), $archivo); // Fix the undefined type error
+                $calificacion->procesado = true;
+                $calificacion -> save();
                 return response()->json([
                     'success' => true,
                     'message' => 'Calificaciones procesadas correctamente'
@@ -45,9 +45,9 @@ class CalificacionProcesadaController extends Controller
         }
     }
     public function getAprobadosReprobados(Request $request, $id){
-        $cohorte = Cohorte::find($id);
-        if($cohorte){
-            if($cohorte->procesado == false){
+        $calificacion = Calificacion::find($id);
+        if($calificacion){
+            if($calificacion->procesado == false){
                 return response()->json([
                     'success' => false,
                     'message' => 'Las calificaciones no han sido procesadas'
@@ -55,10 +55,10 @@ class CalificacionProcesadaController extends Controller
             }
 
             $aprobados = CalificacionProcesada::where('calificacion', '>=', 7)
-                ->where('idCohorte', $id)
+                ->where('idCalificacion', $id)
                 ->count();
             $reprobados = CalificacionProcesada::where('calificacion', '<', 7)
-                ->where('idCohorte', $id)
+                ->where('idCalificacion', $id)
                 ->count();
             return response()->json([
                 'success' => true,
@@ -73,11 +73,11 @@ class CalificacionProcesadaController extends Controller
         }
     }
     public function getAniosInMatriculas(Request $request, $id){
-        $cohorte = Cohorte::find($id);
-        if($cohorte){
+        $calificacion = Calificacion::find($id);
+        if($calificacion){
             $resultados = CalificacionProcesada::selectRaw('count(*) as cantidad, SUBSTRING(alumnos.matricula, 5, 2) as anio')
                 ->join('alumnos', 'alumnos.id', '=', 'calificacion_procesadas.idAlumno')
-                ->where('calificacion_procesadas.idCohorte', 1)
+                ->where('calificacion_procesadas.idCalificacion', $id)
                 ->groupByRaw('SUBSTRING(alumnos.matricula, 5, 2)')
                 ->get();
             return response()->json([
@@ -90,5 +90,19 @@ class CalificacionProcesadaController extends Controller
                 'message' => 'No se encontraron calificaciones'
             ]);
         }
+    }
+    public function getMateriasMasReprobadasByCohorte(Request $request, $idCohorte){
+        $reprobados = CalificacionProcesada::join('materias', 'materias.id', '=', 'calificacion_procesadas.idMateria')
+            ->join('alumnos', 'alumnos.id', '=', 'calificacion_procesadas.idAlumno')
+            ->selectRaw('materias.nombre as materia, count(*) as reprobados')
+            ->where('calificacion_procesadas.Calificacion', '<', 7)
+            ->where('alumnos.idCohorte', $idCohorte)
+            ->groupBy('materias.nombre')
+            ->get();
+        return response()->json([
+            'success' => true,
+            'resultados' => $reprobados
+        ]);
+
     }
 }

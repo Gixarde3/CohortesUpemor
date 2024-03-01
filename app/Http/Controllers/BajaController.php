@@ -8,14 +8,13 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Usuario;
 use App\Models\Baja;
-use App\Models\Cohorte;
 use App\Imports\BajaImport;
 use Maatwebsite\Excel\Facades\Excel; // Import the Excel class
 
 class BajaController extends Controller
 {
     //
-    public function crearBajas(Request $request, $id)
+    public function crearBajas(Request $request)
     {
         $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 3)->first();
         if ($admin) {
@@ -23,8 +22,8 @@ class BajaController extends Controller
             $fileName = $this->manejarArchivo($file);
             $newBaja = new Baja();
             $newBaja->archivo = $fileName;
-            $newBaja->idCohorte = $id;
             $newBaja->idUsuario = $admin->id;
+            $newBaja->periodo = $request->periodo;
             $newBaja->procesado = false;
             $newBaja->save();
             $success = true;
@@ -66,7 +65,7 @@ class BajaController extends Controller
             $file = $request->file('archivo');
             $fileName = $this->manejarArchivo($file);
             $baja->archivo = $fileName;
-            $baja->idCohorte = $request->idCohorte;
+            $baja->periodo = $request->periodo;
             $baja->save();
             $success = true;
             $message = 'Bajas actualizadas correctamente';
@@ -95,7 +94,7 @@ class BajaController extends Controller
 
     public function getBajas(Request $request)
     {
-        $bajas = Baja::join('cohortes', 'bajas.idCohorte', '=', 'cohortes.id')->select('bajas.*', 'cohortes.periodo', 'cohortes.anio', 'cohortes.plan')->get();
+        $bajas = Baja::all();
         $success = true;
         $message = 'Bajas obtenidas correctamente';
         return response()->json([
@@ -124,16 +123,10 @@ class BajaController extends Controller
         if ($admin) {
             $baja = Baja::find($id);
             if($baja){
-                $cohorte = Cohorte::find($baja->idCohorte);
-                if(!$cohorte){
-                    return response()->json([
-                        'success' => false,
-                        'message' => "No se encontró el cohorte con ese ID"
-                    ]);
-                }
+                
                 $archivo = $baja->archivo;
                 $archivo = public_path('excel/'.$archivo);
-                Excel::import(new BajaImport($id, ($cohorte->periodo.$cohorte->anio)), $archivo); // Fix the undefined type error
+                Excel::import(new BajaImport($id, $baja->periodo, $baja->idUsuario), $archivo); // Fix the undefined type error
                 $baja->procesado = true;
                 $baja->save();
                 return response()->json([

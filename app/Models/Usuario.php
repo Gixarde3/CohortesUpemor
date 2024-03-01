@@ -37,4 +37,7 @@ class Usuario extends Model
     public function cohortes(){
         return $this->hasMany(Cohorte::class);
     }
+    public function calificacions(){
+        return $this->hasMany(Calificacion::class);
+    }
 }
