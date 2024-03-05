@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('archivo');
             $table->boolean('procesado');
+            $table->year('anio');
+            $table->string('periodo');
             $table->unsignedBigInteger('idCreador');
             $table->foreign('idCreador')->references('id')->on('usuarios')->onDelete('cascade');
             $table->timestamps();

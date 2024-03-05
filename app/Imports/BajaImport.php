@@ -65,7 +65,7 @@ class BajaImport implements ToCollection, WithHeadingRow, WithBatchInserts, With
                 'plan' => $carrera." H".substr($row['matricula'], 4,2),
                 'idCreador' => $this->idCreador
             ]);
-            $alumno = Alumno::firstOrCreate([
+            $alumno = Alumno::firstOrNew([
                 'matricula' => $row['matricula'],
                 'idCohorte' => $cohorte->id
             ]);

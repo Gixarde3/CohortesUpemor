@@ -49,9 +49,18 @@ class DatabaseSeeder extends Seeder
         ]);
         \App\Models\Baja::factory()->create([
             'idUsuario' => 1,
-            'archivo' => '65bfeff33b96e.xlsx',
+            'archivo' => '65bfefb91dbd0.xlsx',
             'procesado' => 0,
             'periodo'=> 'I2024',
         ]);
+
+        \App\Models\Admision::factory()->create([
+            'archivo' => '65e20414767ce.xlsx',
+            'procesado' => 0,
+            'periodo' => 'I',
+            'anio' => 2024,
+            'idCreador' => 1
+        ]);
+        
     }
 }

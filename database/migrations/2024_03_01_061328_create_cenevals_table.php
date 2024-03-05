@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('cenevals', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('idAspirante')->constrained('aspirantes');
-            $table->boolean('pagado');
-            $table->string('folio');
-            $table->date('fecha');
-            $table->integer('calificacion');
-            $table->boolean('estado');
+            $table->foreignId('idAspirante')->constrained('aspirantes')->onDelete('cascade');
+            $table->boolean('pagado')->nullable();
+            $table->string('folio')->nullable();
+            $table->integer('calificacion')->nullable();
+            $table->date('fecha')->nullable();
+            $table->boolean('estado')->nullable();
             $table->timestamps();
         });
     }

@@ -55,6 +55,7 @@ class CalificacionController extends Controller
                     $calificacion->archivo = $this->manejarArchivo($request->file('archivo'));
                 }
                 $calificacion->carrera = $request->carrera;
+                $calificacion->anio = $request->anio;
                 $calificacion->periodo = $request->periodo;
                 $calificacion->save();
                 $success = true;

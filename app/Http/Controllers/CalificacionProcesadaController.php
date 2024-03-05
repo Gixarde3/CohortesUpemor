@@ -105,4 +105,34 @@ class CalificacionProcesadaController extends Controller
         ]);
 
     }
+    public function getCohortesByCuatrimestre(Request $request, $id){
+        $calificacion = Calificacion::find($id);
+        if($calificacion){
+            $resultados = CalificacionProcesada::join('alumnos', 'alumnos.id', '=', 'calificacion_procesadas.idAlumno')
+                            ->join('grupos', 'grupos.id', '=', 'calificacion_procesadas.idGrupo')
+                            ->join('cohortes', 'cohortes.id', '=', 'alumnos.idCohorte')
+                            ->selectRaw('CONCAT(cohortes.periodo, cohortes.anio) as cohorte, grupos.grado, COUNT(alumnos.id) as cantidad_alumnos')
+                            ->groupByRaw('CONCAT(grupos.grado, "-", cohortes.periodo, cohortes.anio), cohortes.periodo, cohortes.anio, grupos.grado')
+                            ->where('calificacion_procesadas.idCalificacion', $id)
+                            ->get();
+
+            $organizado = [];
+            foreach ($resultados as $resultado) {
+                $grado = $resultado["grado"] === null ? "Recursamiento" : $resultado["grado"];
+                $organizado[$grado][] = [
+                    "cohorte" => $resultado["cohorte"],
+                    "cantidad" => $resultado["cantidad_alumnos"]
+                ];
+            }
+            return response()->json([
+                'success' => true,
+                'resultados' => $organizado
+            ]);
+        }else{
+            return response()->json([
+                'success' => false,
+                'message' => 'No se encontraron calificaciones'
+            ]);
+        }
+    }
 }

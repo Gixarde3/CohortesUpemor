@@ -1,27 +1,22 @@
 <?php
 
 namespace App\Imports;
-
-use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
-
+use App\Imports\SolicitudesImport;
 class AdminisionesMultiImport implements WithMultipleSheets
 {
-    /**
-    * @param Collection $collection
-    */
-    public function collection(Collection $collection)
+    private $idAdmision;
+    private $idCreador;
+    public function __construct($idAdmision, $idCreador)
     {
-        //
+        $this->idAdmision = $idAdmision;
+        $this->idCreador = $idCreador;
     }
     public function sheets(): array
     {
         return [
-            'SOLICITUDES_RECIBIDAS' => new SolicitudesImport(),
-            'EXANI_II' => new ExaniImport(),
-            'CURSO' => new CursoImport(),
-            'INSCRITOS' => new InscritosImport()
+            'CURSO' => new CursoImport($this->idAdmision),
+            'INSCRITOS' => new InscritosImport($this->idCreador)
         ];
     }
 }

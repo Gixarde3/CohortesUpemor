@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdmisionController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\CohorteController;
 use App\Http\Controllers\GrupoController; // Import the missing class
@@ -74,6 +75,7 @@ Route::controller(CalificacionProcesadaController::class)->group(function(){
     Route::get('calificacion/matriculas/{id}','getAniosInMatriculas');
     Route::get('califcaciones','getCalificaciones');
     Route::get('cohorte/calificaciones/{idCohorte}','getMateriasMasReprobadasByCohorte');
+    Route::get('calificacion/matriculasPorCuatrimestre/{id}','getCohortesByCuatrimestre');
     
 });
 
@@ -98,4 +100,14 @@ Route::controller(BackupController::class)->group(function(){
 Route::controller(BajaProcesadaController::class)->group(function(){
     Route::get('cohorte/bajas/periodos/{idCohorte}','getBajasByPeriodo');
     Route::get('cohorte/bajas/{idCohorte}','getBajas');
+});
+
+Route::controller(AdmisionController::class)->group(function(){
+    Route::post('admision','crearAdmision');
+    Route::post('admision/edit/{id}','editarAdmision');
+    Route::post('admision/delete/{id}','eliminarAdmision');
+    Route::get('admisiones','getAdmisiones');
+    Route::get('admision/{id}','getAdmisionById');
+    Route::post('admision/procesar/{id}','procesarAdmision');
+    Route::get('admision/download/{id}','descargarAdmision');
 });
