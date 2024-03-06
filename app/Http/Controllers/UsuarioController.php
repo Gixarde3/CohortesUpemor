@@ -10,14 +10,44 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\MailNotificacion;
+use App\Mail\MailNotificacionNuevo;
+use App\Mail\MailNotificacionUsuario;
 
 class UsuarioController extends Controller
 {
     //
     public function register(Request $request){
         try {
-            $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
-            if ($admin) {
+            if($request->tipoUsuario != 0){
+                $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+                if ($admin) {
+                    $this->validate($request, [
+                        'email' => 'required|email|unique:usuarios'
+                    ]);
+                    $request->validate([
+                        'foto'=>'required|image'
+                    ]);
+                    $newUser = new Usuario();
+                    $newUser->noEmp = $request->noEmp;
+                    $newUser->nombre = $request->nombre;
+                    $newUser->apP = $request->apP;
+                    $newUser->apM = $request->apM;
+                    $newUser->tipoUsuario = $request->tipoUsuario;
+                    $newUser->email = $request->email;
+                    $newUser->password = $request->password;
+                    $newUser->foto = $this->manejarImagenes($request->file('foto'));
+                    $newUser->recuperacion = null;
+                    $cookie = Str::random(60);
+                    $newUser->token = $cookie;
+                    $newUser->save();
+                    $success = true;
+                    $message = 'Usuario registrado correctamente';
+                    Mail::to($admin->email)->send(new MailNotificacion($request->email));
+                }else{
+                    $success = false;
+                    $message = "No cuentas con los permisos necesarios";
+                }
+            }else{
                 $this->validate($request, [
                     'email' => 'required|email|unique:usuarios'
                 ]);
@@ -39,10 +69,10 @@ class UsuarioController extends Controller
                 $newUser->save();
                 $success = true;
                 $message = 'Usuario registrado correctamente';
-                Mail::to($admin->email)->send(new MailNotificacion($request->email));
-            }else{
-                $success = false;
-                $message = "No cuentas con los permisos necesarios";
+                $admins = Usuario::where('tipoUsuario','>=', 3)->get();
+                foreach($admins as $admin){
+                    Mail::to($admin->email)->send(new MailNotificacionNuevo($request->email));
+                }
             }
         } catch (ValidationException $e) {
             $message = $e->getMessage();
@@ -84,6 +114,9 @@ class UsuarioController extends Controller
                 $user->nombre = $request->nombre;
                 $user->apP = $request->apP;
                 $user->apM = $request->apM;
+                if($user->tipoUsuario != $request->tipoUsuario){
+                    Mail::to($user->email)->send(new MailNotificacionUsuario($request->tipoUsuario === 1 ? "Director" : ($request->tipoUsuario === 2 ? "Coordinador/Profesor" : "Administrador")));
+                }
                 $user->tipoUsuario = $request->tipoUsuario;
                 $user->email = $request->email;
                 if($request->has('password')){

@@ -19,6 +19,10 @@ class LoginController extends Controller
             return response()->json(['error' => 'Credenciales inválidas'], 401);
         }
 
+        if(!$usuario->tipoUsuario >= 1){
+            return response()->json(['error' => 'No tienes acceso aún'], 403);
+        }
+
         // Generar un token aleatorio
         $token = Str::random(60);
 
