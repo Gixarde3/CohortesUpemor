@@ -62,9 +62,12 @@ class BajaController extends Controller
         $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 3)->first();
         if ($admin) {
             $baja = Baja::find($id);
-            $file = $request->file('archivo');
-            $fileName = $this->manejarArchivo($file);
-            $baja->archivo = $fileName;
+            if($request->hasFile('archivo')){
+                $this->deleteFile($baja->archivo);
+                $file = $request->file('archivo');
+                $fileName = $this->manejarArchivo($file);
+                $baja->archivo = $fileName;
+            };
             $baja->periodo = $request->periodo;
             $baja->save();
             $success = true;
@@ -122,7 +125,7 @@ class BajaController extends Controller
         $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 3)->first();
         if ($admin) {
             $baja = Baja::find($id);
-            if($baja){
+            if($baja && $baja->procesado == false){
                 
                 $archivo = $baja->archivo;
                 $archivo = public_path('excel/'.$archivo);
@@ -135,7 +138,7 @@ class BajaController extends Controller
                 ]);
             }else{
                 $success = false;
-                $message = "No se encontró la baja con ese ID";
+                $message = "No se encontró una baja no procesada con ese ID";
             }
         } else {
             $success = false;

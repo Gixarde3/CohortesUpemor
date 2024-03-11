@@ -21,7 +21,7 @@ class CalificacionProcesadaController extends Controller
         $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
         $calificacion = Calificacion::find($id);
         if($admin){
-            if($calificacion){
+            if($calificacion && $calificacion->procesado == false){
                 $archivo = $calificacion->archivo;
                 $archivo = public_path('excel/'.$archivo);
                 Excel::import(new CalificacionesImportMulti($admin->id, $calificacion->id), $archivo); // Fix the undefined type error

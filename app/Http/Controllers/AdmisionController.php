@@ -109,7 +109,7 @@ class AdmisionController extends Controller
         $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 3)->first();
         $admision = Admision::find($id);
         if($admin){
-            if($admision){
+            if($admision && !$admision->procesado){
                 $archivo = $admision->archivo;
                 $archivo = public_path('excel/'.$archivo);
                 Excel::import(new AdminisionesMultiImport($admision->id, $admin->id), $archivo); // Fix the undefined type error

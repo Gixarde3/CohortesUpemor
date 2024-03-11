@@ -5,6 +5,7 @@ namespace App\Imports;
 use Illuminate\Support\Collection;
 use App\Models\Cohorte;
 use App\Models\Alumno;
+use App\Models\Aspirante;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow; // Add this line
 use Maatwebsite\Excel\Concerns\WithBatchInserts; // Add this line
@@ -80,6 +81,11 @@ class InscritosImport implements ToCollection, WithHeadingRow, WithBatchInserts,
             $alumno->apM = $apM;
             $alumno->activo = true;
             $alumno->save();
+            $aspirante = Aspirante::whereRaw("CONCAT(apP, ' ', apM, ' ', nombre) = '".$row['nombre_4']."'")->first();
+            if($aspirante){
+                $aspirante->idAlumno = $alumno->id;
+                $aspirante->save();
+            }
         }
     }
     public function rules(): array

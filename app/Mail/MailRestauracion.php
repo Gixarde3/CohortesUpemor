@@ -13,12 +13,14 @@ class MailRestauracion extends Mailable
 {
     use Queueable, SerializesModels;
     public $url;
+    public $codigo;
     /**
      * Create a new message instance.
      */
-    public function __construct($url)
+    public function __construct($url, $codigo)
     {
         $this->url = $url;
+        $this->codigo = $codigo;
         //
     }
 

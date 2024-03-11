@@ -15,16 +15,26 @@ class LoginController extends Controller
     {
         $usuario = Usuario::where('email', $request->input('email'))->first();
 
-        if (!$usuario || !password_verify($request->input('password'), $usuario->password)) {
-            return response()->json(['error' => 'Credenciales inválidas'], 401);
+        if(!$usuario){
+            return response()->json(['error' => 'mail'], 401);
+        }
+
+        if(!password_verify($request->input('password'), $usuario->password)){
+            return response()->json(['error' => 'password'], 401);
         }
 
         if(!$usuario->tipoUsuario >= 1){
-            return response()->json(['error' => 'No tienes acceso aún'], 403);
+            return response()->json(['error' => 'Espera a que un administrador te verifique'], 403);
+        }
+
+        if(!$usuario->activo){
+            return response()->json(['error' => 'Tu cuenta ha sido desactivada'], 403);
         }
 
         // Generar un token aleatorio
         $token = Str::random(60);
+
+
 
         // Asignar el token generado al usuario actual y guardarlo en la base de datos
         $usuario->token = $token;
@@ -47,16 +57,16 @@ class LoginController extends Controller
             return response()->json(['error' => 'Credenciales inválidas'], 401);
         }
 
-        // Generar un token aleatorio
-        $token = Str::random(60);
+        // Generar un token aleatorio de 4 numeros
+        $token = rand(100000, 999999);
 
 
         // Asignar el token generado al usuario actual y guardarlo en la base de datos
         $usuario->recuperacion = $token;
         $usuario->save();
 
-        $url = "localhost:5173/restaurar/$token";
-        Mail::to($request->email)->send(new MailRestauracion($url));
+        $url = "localhost:5173/restaurar";
+        Mail::to($request->email)->send(new MailRestauracion($url, $token));
         // Devolver los datos solicitados en formato JSON
         return response()->json([
             'message' => 'Correo enviado',
@@ -66,7 +76,7 @@ class LoginController extends Controller
 
     public function restorePassword(Request $request, $hash)
     {
-        $usuario = Usuario::where('recuperacion', $hash)->first();
+        $usuario = Usuario::where('token', $hash)->first();
 
         if (!$usuario) {
             return response()->json(['error' => 'Credenciales inválidas'], 401);
@@ -88,7 +98,7 @@ class LoginController extends Controller
     }
 
     public function verifyHash(Request $request, $hash){
-        $usuario = Usuario::where('recuperacion', $hash)->first();
+        $usuario = Usuario::where('token', $hash)->first();
 
         if (!$usuario) {
             return response()->json(['error' => 'Credenciales inválidas'], 401);
@@ -97,5 +107,28 @@ class LoginController extends Controller
         return response()->json([
             'success' => true
         ]);
+    }
+
+    public function verifyCode(Request $request, $code){
+        $usuario = Usuario::where('email', $request->email)->first();
+
+        if (!$usuario) {
+            return response()->json(['error' => 'Credenciales inválidas'], 401);
+        }
+
+        $token = Str::random(60);
+
+        $usuario->token = $token;
+        $usuario->save();
+        if($usuario->recuperacion == $code){
+            return response()->json([
+                'success' => true,
+                'token' => $token
+            ]);
+        }else{
+            return response()->json([
+                'error' => 'Credenciales inválidas'
+            ]);
+        }
     }
 }

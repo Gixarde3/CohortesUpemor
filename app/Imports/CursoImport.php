@@ -66,7 +66,8 @@ class CursoImport implements ToCollection, WithHeadingRow, WithBatchInserts, Wit
                 'curp' => $row['curp'],
                 'idCurso' => $curso->id,
                 'pago_curso' => $row['pago_curso_seleccion'] != "NO HA PAGADO",
-                'aprobo_curso' => $row['estado_curso_seleccion'] == "APROBADO"
+                'aprobo_curso' => $row['estado_curso_seleccion'] == "APROBADO",
+                'sexo' => $row['genero'] == 'MASCULINO' ? 'M' : 'F'
             ]
         );
         Ceneval::create(

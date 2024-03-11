@@ -28,6 +28,11 @@
             font-size: 32px;
             text-align: center;
         }
+        h2{
+            margin: 0;
+            font-size: 24px;
+            text-align: center;
+        }
         p{
             margin:0;
             font-family: "Open Sans";
@@ -66,8 +71,9 @@
             <img src="{{ $message->embed(public_path() . '/images/mail/logo.png') }}" alt="Logo de la UPEMOR" style="max-width: 100%;">
         </div>
         <h1 style="text-align: center; color: #F50003;">Se ha enviado una solicitud de restauración de contraseña</h1>
+        <h2>El código de restauración es: {{$codigo}}</h2>
         <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
-            <a href="{{ $url }}" style="background-color: #F50003; color: white; padding: 10px 20px; text-decoration: none; margin-bottom:1rem;">Cambiar contraseña</a>
+            <a href={{ $url }} style="background-color: #F50003; color: white; padding: 10px 20px; text-decoration: none; margin-bottom:1rem;">Cambiar contraseña</a>
         </div>
         <p class="aclaracion">Si el enlace no funcion copia y pega este</p>
         <p class="aclaracion">{{ $url }}</p>

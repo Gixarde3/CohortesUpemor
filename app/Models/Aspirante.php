@@ -28,7 +28,9 @@ class Aspirante extends Model
         'escuela_procedencia',
         'curp',
         'pago_curso',
-        'aprobo_curso'
+        'aprobo_curso',
+        'idAlumno',
+        'sexo'
     ];
     public function admisiones(){
         return $this->belongsTo(Admision::class);

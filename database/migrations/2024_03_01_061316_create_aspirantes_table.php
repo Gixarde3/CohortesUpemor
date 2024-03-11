@@ -33,7 +33,10 @@ return new class extends Migration
             $table->string('curp', 18)->nullable();
             $table->boolean('pago_curso')->nullable();
             $table->boolean('aprobo_curso')->nullable();
+            $table->char('sexo', 1)->nullable(); // M, F, O (other
+            $table->unsignedBigInteger('idAlumno')->nullable();
             $table->foreign('idCurso')->references('id')->on('cursos')->onDelete('cascade');
+            $table->foreign('idAlumno')->references('id')->on('alumnos')->onDelete('cascade');
             $table->timestamps();
         });
     }

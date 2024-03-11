@@ -11,6 +11,7 @@ use App\Http\Controllers\CalificacionProcesadaController; // Import the missing 
 use App\Http\Controllers\BajaController; // Import the missing class
 use App\Http\Controllers\BajaProcesadaController;
 use App\Http\Controllers\CalificacionController;
+use App\Http\Controllers\AspiranteController;
 use App\Models\Calificacion;
 
 /*
@@ -24,10 +25,13 @@ use App\Models\Calificacion;
 |
 */
 
-Route::post('/login', [LoginController::class, 'login']);
-Route::post('/sendMail', [LoginController::class, 'sendRestoreMail']);
-Route::post('/restorePassword/{hash}', [LoginController::class, 'restorePassword']);
-Route::post('/verifyHash/{hash}', [LoginController::class, 'verifyHash']);
+Route::group(['controller' => LoginController::class], function () {
+    Route::post('login', 'login');
+    Route::post('sendMail', 'sendRestoreMail');
+    Route::post('restorePassword/{hash}', 'restorePassword');
+    Route::post('verifyHash/{hash}', 'verifyHash');
+    Route::post('verifyCode/{code}', 'verifyCode');
+});
 
 Route::controller(UsuarioController::class)->group(function(){
     Route::get('user/{hash}', 'getUserByHash');
@@ -36,6 +40,8 @@ Route::controller(UsuarioController::class)->group(function(){
     Route::get('usuario/{id}','getUserById');
     Route::post('usuario/edit/{id}','editUser');
     Route::post('usuario/delete/{id}','deleteUser');
+    Route::post('usuario/desactivar/{id}','desactivar');
+    Route::post('usuario/activar/{id}','activar');
 });
 
 Route::controller(CohorteController::class)->group(function(){
@@ -100,6 +106,7 @@ Route::controller(BackupController::class)->group(function(){
 Route::controller(BajaProcesadaController::class)->group(function(){
     Route::get('cohorte/bajas/periodos/{idCohorte}','getBajasByPeriodo');
     Route::get('cohorte/bajas/{idCohorte}','getBajas');
+    Route::get('bajas/rango/{anio1}/{anio2}/{carrera}','getBajasByRango');
 });
 
 Route::controller(AdmisionController::class)->group(function(){
@@ -110,4 +117,10 @@ Route::controller(AdmisionController::class)->group(function(){
     Route::get('admision/{id}','getAdmisionById');
     Route::post('admision/procesar/{id}','procesarAdmision');
     Route::get('admision/download/{id}','descargarAdmision');
+});
+
+Route::controller(AspiranteController::class)->group(function(){
+    Route::get('aspirantes/inscritos/{id}', 'getAspirantesInscritos');
+    Route::get('aspirantes/anioNac/{id}', 'getAnioNacAspirantes');
+    Route::post('admision/prueba/{id}', 'prueba');
 });

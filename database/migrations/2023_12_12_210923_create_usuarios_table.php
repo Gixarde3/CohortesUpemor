@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('foto');
             $table->string('recuperacion')->unique()->nullable();
+            $table->boolean('activo')->default(true);
             $table->string('token')->unique()->nullable();
             $table->timestamps();
         });

@@ -43,6 +43,7 @@ class UsuarioController extends Controller
                     $success = true;
                     $message = 'Usuario registrado correctamente';
                     Mail::to($admin->email)->send(new MailNotificacion($request->email));
+                    Mail::to($request->email)->send(new MailNotificacionNuevo($request->email));
                 }else{
                     $success = false;
                     $message = "No cuentas con los permisos necesarios";
@@ -176,6 +177,40 @@ class UsuarioController extends Controller
         File::move($storageRoute,$publicRoute);
         Storage::delete($storageRoute);
         return $nameFile.$extensionFile;
+    }
+    public function desactivar(Request $request, $id){
+        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+        if ($admin) {
+            $user = Usuario::where('id', $id)->first();
+            $user->activo = false;
+            $user->save();
+            $success = true;
+            $message = 'Usuario desactivado correctamente';
+        }else{
+            $success = false;
+            $message = "No cuentas con los permisos necesarios";
+        }
+        return response()->json([
+            'success'=> $success,
+            'message'=>$message
+        ]);
+    }
+    public function activar(Request $request, $id){
+        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+        if ($admin) {
+            $user = Usuario::where('id', $id)->first();
+            $user->activo = true;
+            $user->save();
+            $success = true;
+            $message = 'Usuario reactivado correctamente';
+        }else{
+            $success = false;
+            $message = "No cuentas con los permisos necesarios";
+        }
+        return response()->json([
+            'success'=> $success,
+            'message'=>$message
+        ]);
     }
 }
 
