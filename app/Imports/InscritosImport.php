@@ -22,9 +22,11 @@ class InscritosImport implements ToCollection, WithHeadingRow, WithBatchInserts,
     * @param Collection $collection
     */
     private $idCreador;
-    public function __construct($idCreador)
+    private $idAdmision;
+    public function __construct($idCreador, $idAdmision)
     {
         $this->idCreador = $idCreador;
+        $this->idAdmision = $idAdmision;
     }
     public function collection(Collection $rows)
     {
@@ -57,7 +59,7 @@ class InscritosImport implements ToCollection, WithHeadingRow, WithBatchInserts,
                 'anio' =>"20".substr($row['matricula_1'], 4,2),
                 'plan' => $carrera." H".substr($row['matricula_1'], 4,2)
             ]);
-            $alumno = Alumno::firstOrNew([
+            $alumno = Alumno::firstOrCreate([
                 'matricula' => $row['matricula_1'],
             ]);
             $partesNombre = explode(" ", $row['nombre_4']);
@@ -81,7 +83,9 @@ class InscritosImport implements ToCollection, WithHeadingRow, WithBatchInserts,
             $alumno->apM = $apM;
             $alumno->activo = true;
             $alumno->save();
-            $aspirante = Aspirante::whereRaw("CONCAT(apP, ' ', apM, ' ', nombre) = '".$row['nombre_4']."'")->first();
+            $aspirante = Aspirante::whereRaw("CONCAT(apP, ' ', apM, ' ', nombre) = '".$row['nombre_4']."'")->
+                                    where('idAdmision', $this->idAdmision)->
+                                    first();
             if($aspirante){
                 $aspirante->idAlumno = $alumno->id;
                 $aspirante->save();

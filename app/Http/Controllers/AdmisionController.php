@@ -9,6 +9,7 @@ use App\Models\Usuario;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\AdmisionData;
 class AdmisionController extends Controller
 {
     //
@@ -176,5 +177,37 @@ class AdmisionController extends Controller
         } else {
             return false;
         }
+    }
+
+    public function getFichasVendidas(Request $request, $anio1, $anio2, $carrera){
+        if($anio1 > $anio2) 
+            return response()->json(['success' => false, 'message' => 'El año 1 debe ser menor al año 2']);
+
+        $admisiones = AdmisionData::join('admisions', 'admisions.id', '=', 'admision_data.idAdmision')
+                            ->whereBetween('admisions.anio', [$anio1, $anio2])
+                            ->where('admision_data.carrera', $carrera)
+                            ->select('admision_data.solicitudes as total', 'admisions.anio')
+                            ->groupBy('admisions.anio', 'admision_data.solicitudes')
+                            ->get();
+        return response()->json([
+            'success' => true,
+            'resultados' => $admisiones
+        ]);
+    }
+
+    public function getExamenesPresentados(Request $request, $anio1, $anio2, $carrera){
+        if($anio1 > $anio2) 
+            return response()->json(['success' => false, 'message' => 'El año 1 debe ser menor al año 2']);
+
+        $admisiones = AdmisionData::join('admisions', 'admisions.id', '=', 'admision_data.idAdmision')
+                            ->whereBetween('admisions.anio', [$anio1, $anio2])
+                            ->where('admision_data.carrera', $carrera)
+                            ->select('admision_data.examenes_presentados as total', 'admisions.anio')
+                            ->groupBy('admisions.anio', 'admision_data.examenes_presentados')
+                            ->get();
+        return response()->json([
+            'success' => true,
+            'resultados' => $admisiones
+        ]);
     }
 }

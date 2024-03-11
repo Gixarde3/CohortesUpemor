@@ -57,7 +57,7 @@ class CursoImport implements ToCollection, WithHeadingRow, WithBatchInserts, Wit
                 'telefono1' => $row['telefono_1'],
                 'telefono2' => $row['telefono_2'],
                 'telefono3' => $row['telefono_3'],
-                'carrera' => $row['carrera'],
+                'carrera' => $row['carrera'] === "IIF-H" ? "ITI-H" : $row['carrera'],
                 'municipio' => $row['municipio'],
                 'foraneo' => $row['foraneo'] != "NO",
                 'tipo' => $row['tipo_aspirante'],

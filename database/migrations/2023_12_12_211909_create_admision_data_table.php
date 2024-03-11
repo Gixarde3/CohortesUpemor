@@ -15,9 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('idAdmision')->constrained('admisions')->onDelete('cascade');
             $table->string('carrera');
-            $table->integer('lugares_ofertados');
             $table->integer('solicitudes');
-            
+            $table->integer('examenes_presentados');
             $table->timestamps();
         });
     }

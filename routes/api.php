@@ -117,10 +117,11 @@ Route::controller(AdmisionController::class)->group(function(){
     Route::get('admision/{id}','getAdmisionById');
     Route::post('admision/procesar/{id}','procesarAdmision');
     Route::get('admision/download/{id}','descargarAdmision');
+    Route::get('aspirantes/fichas/{anio1}/{anio2}/{carrera}','getFichasVendidas');
+    Route::get('aspirantes/examenes/{anio1}/{anio2}/{carrera}','getExamenesPresentados');
 });
 
 Route::controller(AspiranteController::class)->group(function(){
-    Route::get('aspirantes/inscritos/{id}', 'getAspirantesInscritos');
-    Route::get('aspirantes/anioNac/{id}', 'getAnioNacAspirantes');
-    Route::post('admision/prueba/{id}', 'prueba');
+    Route::get('aspirantes/inscritos/{anio1}/{anio2}/{carrera}', 'getAspirantesInscritos');
+    Route::get('aspirantes/aprobados/{anio1}/{anio2}/{carrera}', 'getAprobadosCeneval');
 });

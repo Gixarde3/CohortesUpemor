@@ -15,8 +15,9 @@ class AdminisionesMultiImport implements WithMultipleSheets
     public function sheets(): array
     {
         return [
+            'Tabla' => new TablaImport($this->idAdmision),
             'CURSO' => new CursoImport($this->idAdmision),
-            'INSCRITOS' => new InscritosImport($this->idCreador)
+            'INSCRITOS' => new InscritosImport($this->idCreador, $this->idAdmision),
         ];
     }
 }
