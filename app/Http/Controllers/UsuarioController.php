@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\MailNotificacion;
 use App\Mail\MailNotificacionNuevo;
 use App\Mail\MailNotificacionUsuario;
+use App\Mail\NotificacionDesactivar;
+use App\Mail\NotificacionReactivar;
+use App\Models\Notificaciones;
+use Mockery\Matcher\Not;
 
 class UsuarioController extends Controller
 {
@@ -73,6 +77,11 @@ class UsuarioController extends Controller
                 $admins = Usuario::where('tipoUsuario','>=', 3)->get();
                 foreach($admins as $admin){
                     Mail::to($admin->email)->send(new MailNotificacionNuevo($request->email));
+                    Notificaciones::create([
+                        'id_usuario' => $admin->id,
+                        'titulo' => 'Nuevo usuario registrado',
+                        'descripcion' => "Nuevo usuario registrado: ".$request->email
+                    ]);
                 }
             }
         } catch (ValidationException $e) {
@@ -117,6 +126,11 @@ class UsuarioController extends Controller
                 $user->apM = $request->apM;
                 if($user->tipoUsuario != $request->tipoUsuario){
                     Mail::to($user->email)->send(new MailNotificacionUsuario($request->tipoUsuario === 1 ? "Director" : ($request->tipoUsuario === 2 ? "Coordinador/Profesor" : "Administrador")));
+                    Notificaciones::create([
+                        'id_usuario' => $user->id,
+                        'titulo' => 'Cambio de tipo de usuario',
+                        'descripcion' => "Tu tipo de usuario ha sido cambiado a: ".($request->tipoUsuario === 1 ? "Director" : ($request->tipoUsuario === 2 ? "Coordinador/Profesor" : "Administrador"))
+                    ]);
                 }
                 $user->tipoUsuario = $request->tipoUsuario;
                 $user->email = $request->email;
@@ -186,6 +200,7 @@ class UsuarioController extends Controller
             $user->save();
             $success = true;
             $message = 'Usuario desactivado correctamente';
+            Mail::to($user->email)->send(new NotificacionDesactivar());
         }else{
             $success = false;
             $message = "No cuentas con los permisos necesarios";
@@ -203,6 +218,7 @@ class UsuarioController extends Controller
             $user->save();
             $success = true;
             $message = 'Usuario reactivado correctamente';
+            Mail::to($user->email)->send(new NotificacionReactivar());
         }else{
             $success = false;
             $message = "No cuentas con los permisos necesarios";

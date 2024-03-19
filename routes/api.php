@@ -12,6 +12,7 @@ use App\Http\Controllers\BajaController; // Import the missing class
 use App\Http\Controllers\BajaProcesadaController;
 use App\Http\Controllers\CalificacionController;
 use App\Http\Controllers\AspiranteController;
+use App\Http\Controllers\NotificacionesController;
 use App\Models\Calificacion;
 
 /*
@@ -24,6 +25,10 @@ use App\Models\Calificacion;
 | asignadas al grupo de middleware "api". 
 |
 */
+
+Route::group(['controller' => NotificacionesController::class], function () {
+    Route::get('notificaciones/{token}', 'getNotificaciones');
+});
 
 Route::group(['controller' => LoginController::class], function () {
     Route::post('login', 'login');
