@@ -33,6 +33,18 @@ class DatabaseSeeder extends Seeder
             'token' => 'hNKC93UNPX8nE3lhYAZQgU3IoBmLed7ilZw1lLx7HTVrlmYsh2XN95IbPXEP'
         ]);
 
+        \App\Models\Usuario::factory()->create([
+            'noEmp' => '456',
+            'nombre' => 'Miroslawa ',
+            'apP' => 'Miros',
+            'apM' => 'Miros',
+            'tipoUsuario' => 3,
+            'email' => 'psmo200660@upemor.edu.mx',
+            'password' => 'password',
+            'foto' => '65c6f3b0118b4.jpg',
+            'token' => 'CMiwSRppoJyrCKOwg2NBNTqG6ZvJHaauFdqoeJRdIFzYhINDdIxsuAxD183d'
+        ]);
+
         \App\Models\Cohorte::factory()->create([
             'periodo' => 'I',
             'anio' => 2024,
