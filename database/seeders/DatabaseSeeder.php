@@ -23,13 +23,13 @@ class DatabaseSeeder extends Seeder
 
         \App\Models\Usuario::factory()->create([
             'noEmp' => '123',
-            'nombre' => 'Marco Antonio',
-            'apP' => 'Chavez',
-            'apM' => 'Rodriguez',
+            'nombre' => 'Administrador',
+            'apP' => 'Prueba',
+            'apM' => 'Prueba',
             'tipoUsuario' => 3,
-            'email' => 'antoniochavezmarco@gmail.com',
-            'password' => 'Und3rt4le!',
-            'foto' => '657a3e3b4058d.png',
+            'email' => 'openaitodos@gmail.com',
+            'password' => 'password',
+            'foto' => '65e75051de8ac.png',
             'token' => 'hNKC93UNPX8nE3lhYAZQgU3IoBmLed7ilZw1lLx7HTVrlmYsh2XN95IbPXEP'
         ]);
 
