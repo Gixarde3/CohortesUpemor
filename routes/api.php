@@ -112,6 +112,7 @@ Route::controller(BajaProcesadaController::class)->group(function(){
     Route::get('cohorte/bajas/periodos/{idCohorte}','getBajasByPeriodo');
     Route::get('cohorte/bajas/{idCohorte}','getBajas');
     Route::get('bajas/rango/{anio1}/{anio2}/{carrera}','getBajasByRango');
+    Route::get('bajas/alumnos/{idCohorte}', 'getAlumnos');
 });
 
 Route::controller(AdmisionController::class)->group(function(){
@@ -124,6 +125,11 @@ Route::controller(AdmisionController::class)->group(function(){
     Route::get('admision/download/{id}','descargarAdmision');
     Route::get('aspirantes/fichas/{anio1}/{anio2}/{carrera}','getFichasVendidas');
     Route::get('aspirantes/examenes/{anio1}/{anio2}/{carrera}','getExamenesPresentados');
+    Route::get('aspirantes/fichas/{idCohorte}', 'getFichasVendidasByCohorte');
+    Route::get('aspirantes/examen/{idCohorte}', 'getExamenesPresentadosByCohorte');
+    Route::get('aspirantes/examen/aprobados/{idCohorte}', 'getAprobadosCeneval');
+    Route::get('aspirantes/curso/{idCohorte}', 'getAspirantesCurso');
+    Route::get('aspirantes/curso/aprobados/{idCohorte}', 'getAprobadosCurso');
 });
 
 Route::controller(AspiranteController::class)->group(function(){

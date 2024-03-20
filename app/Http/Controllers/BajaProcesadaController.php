@@ -14,6 +14,14 @@ class BajaProcesadaController extends Controller
         ->selectRaw('baja_procesadas.periodo, count(*) as total')
         ->where('alumnos.idCohorte', $idCohorte)
         ->groupBy('baja_procesadas.periodo')
+        ->orderByRaw('(
+            (CASE SUBSTR(baja_procesadas.periodo, 1, 1)
+                WHEN "I" THEN 0.2
+                WHEN "P" THEN 0.3
+                WHEN "O" THEN 0.4
+            END) + 
+            SUBSTR(baja_procesadas.periodo, 2, 4)
+        )')
         ->get();
         return response()->json([
             'success' => true,
@@ -48,6 +56,14 @@ class BajaProcesadaController extends Controller
         return response()->json([
             'success' => true,
             'resultados' => $bajas
+        ]);
+    }
+    public function getAlumnos(Request $request, $idCohorte){
+        $activos = Alumno::where('idCohorte', $idCohorte)
+        ->count();
+        return response()->json([
+            'success' => true,
+            'resultados' => $activos
         ]);
     }
 }

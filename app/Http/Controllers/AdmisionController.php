@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\AdmisionData;
+use App\Models\Aspirante;
+use App\Models\Cohorte;
+
 class AdmisionController extends Controller
 {
     //
@@ -208,6 +211,68 @@ class AdmisionController extends Controller
         return response()->json([
             'success' => true,
             'resultados' => $admisiones
+        ]);
+    }
+    public function getFichasVendidasByCohorte(Request $request, $idCohorte){
+        $cohorte = Cohorte::find($idCohorte);
+        $admisiones = AdmisionData::join('admisions', 'admisions.id', '=', 'admision_data.idAdmision')
+                            ->where('admisions.anio', $cohorte->anio)
+                            ->where('admision_data.carrera', substr($cohorte->plan, 0, 3))
+                            ->select('admision_data.solicitudes as total')
+                            ->first();
+        return response()->json([
+            'success' => true,
+            'resultados' => $admisiones->total
+        ]);
+    }
+    public function getExamenesPresentadosByCohorte(Request $request, $idCohorte){
+        $cohorte = Cohorte::find($idCohorte);
+        $admisiones = AdmisionData::join('admisions', 'admisions.id', '=', 'admision_data.idAdmision')
+                            ->where('admisions.anio', $cohorte->anio)
+                            ->where('admision_data.carrera', substr($cohorte->plan, 0, 3))
+                            ->select('admision_data.examenes_presentados as total')
+                            ->first();
+        return response()->json([
+            'success' => true,
+            'resultados' => $admisiones->total
+        ]);
+    }
+    public function getAprobadosCeneval(Request $request, $idCohorte){
+        $cohorte = Cohorte::find($idCohorte);
+        $aprobados = Aspirante::join('admisions', 'admisions.id', '=', 'aspirantes.idAdmision')
+                        ->where('admisions.anio', $cohorte->anio)
+                        ->whereRaw('SUBSTR(aspirantes.carrera, 1, 3) = ?', substr($cohorte->plan, 0, 3))
+                        ->count();
+
+        return response()->json([
+            'success' => true,
+            'resultados'=>$aprobados
+        ]);
+    }
+    public function getAspirantesCurso(Request $request, $idCohorte){
+        $cohorte = Cohorte::find($idCohorte);
+        $aprobados = Aspirante::join('admisions', 'admisions.id', '=', 'aspirantes.idAdmision')
+                        ->where('admisions.anio', $cohorte->anio)
+                        ->whereRaw('SUBSTR(aspirantes.carrera, 1, 3) = ?', substr($cohorte->plan, 0, 3))
+                        ->where('aspirantes.pago_curso', true)
+                        ->count();
+
+        return response()->json([
+            'success' => true,
+            'resultados'=>$aprobados
+        ]);
+    }
+    public function getAprobadosCurso(Request $request, $idCohorte){
+        $cohorte = Cohorte::find($idCohorte);
+        $aprobados = Aspirante::join('admisions', 'admisions.id', '=', 'aspirantes.idAdmision')
+                        ->where('admisions.anio', $cohorte->anio)
+                        ->whereRaw('SUBSTR(aspirantes.carrera, 1, 3) = ?', substr($cohorte->plan, 0, 3))
+                        ->where('aspirantes.aprobo_curso', true)
+                        ->count();
+
+        return response()->json([
+            'success' => true,
+            'resultados'=>$aprobados
         ]);
     }
 }
