@@ -66,8 +66,8 @@ class CalificacionesImport implements ToModel, WithHeadingRow, WithBatchInserts,
         ]);
         $alumno = Alumno::firstOrNew([
             'matricula' => $row['matricula'],
-            'idCohorte' => $cohorte->id,
         ]);
+        $alumno->idCohorte = $cohorte->id;
         $alumno->apP = $row['paterno_alumno'];
         $alumno->apM = $row['materno_alumno'];
         $alumno->nombre = $row['nombre_alumno'];
