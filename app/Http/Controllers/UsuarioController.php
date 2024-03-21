@@ -150,13 +150,11 @@ class UsuarioController extends Controller
                 'apP' => 'required',
                 'apM' => 'required',
                 'tipoUsuario' => 'required',
-                'password' => 'required'
             ], [
                 'nombre.required' => 'El campo de nombre es obligatorio.',
                 'apP.required' => 'El campo de apellido paterno es obligatorio.',
                 'apM.required' => 'El campo de apellido materno es obligatorio.',
                 'tipoUsuario.required' => 'El campo de tipo de usuario es obligatorio.',
-                'password.required' => 'El campo de contraseña es obligatorio.',
             ]);
             if ($admin) {
                 $user = Usuario::where('id', $request->id)->first();
