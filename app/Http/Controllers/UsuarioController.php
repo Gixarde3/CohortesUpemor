@@ -146,20 +146,17 @@ class UsuarioController extends Controller
                 ]);
             }
             $request->validate([
-                'noEmp' => 'required|unique:usuarios',
                 'nombre' => 'required',
                 'apP' => 'required',
                 'apM' => 'required',
                 'tipoUsuario' => 'required',
                 'password' => 'required'
             ], [
-                'noEmp.required' => 'El campo de número de empleado es obligatorio.',
                 'nombre.required' => 'El campo de nombre es obligatorio.',
                 'apP.required' => 'El campo de apellido paterno es obligatorio.',
                 'apM.required' => 'El campo de apellido materno es obligatorio.',
                 'tipoUsuario.required' => 'El campo de tipo de usuario es obligatorio.',
                 'password.required' => 'El campo de contraseña es obligatorio.',
-                'noEmp.unique' => 'El número de empleado ya está registrado en nuestra base de datos.'
             ]);
             if ($admin) {
                 $user = Usuario::where('id', $request->id)->first();
@@ -185,6 +182,15 @@ class UsuarioController extends Controller
                         'email.unique' => 'El correo electrónico ya está registrado en nuestra base de datos.'
                     ]);  
                     $user->email = $request->email;
+                }
+                if($request->noEmp != $user->noEmp){
+                    $this->validate($request, [
+                        'noEmp' => 'required|unique:usuarios'
+                    ], [
+                        'noEmp.required' => 'El campo de número de empleado es obligatorio.',
+                        'noEmp.unique' => 'El número de empleado ya está registrado en nuestra base de datos.'
+                    ]);  
+                    $user->noEmp = $request->noEmp;
                 }
                 if($request->has('password')){
                     $user->password = $request->password;
