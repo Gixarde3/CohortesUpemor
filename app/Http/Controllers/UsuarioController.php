@@ -136,19 +136,15 @@ class UsuarioController extends Controller
     public function editUser(Request $request){
         try {
             $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->orWhere('email', $request->email)->first();
-            $this->validate($request, [
-                'email' => 'required|email|unique:usuarios'
-            ], [
-                'email.required' => 'El campo de correo electrónico es obligatorio.',
-                'email.email' => 'Por favor, introduce una dirección de correo electrónico válida.',
-                'email.unique' => 'El correo electrónico ya está registrado en nuestra base de datos.'
-            ]);                    
-            $request->validate([
-                'foto'=>'required|image'
-            ], [
-                'foto.required' => 'El campo de foto es obligatorio.',
-                'foto.image' => 'Por favor, introduce una imagen válida.'
-            ]);
+            
+            if($request->has('foto')){
+                $request->validate([
+                    'foto'=>'required|image'
+                ], [
+                    'foto.required' => 'El campo de foto es obligatorio.',
+                    'foto.image' => 'Por favor, introduce una imagen válida.'
+                ]);
+            }
             $request->validate([
                 'noEmp' => 'required|unique:usuarios',
                 'nombre' => 'required',
@@ -180,7 +176,16 @@ class UsuarioController extends Controller
                     ]);
                 }
                 $user->tipoUsuario = $request->tipoUsuario;
-                $user->email = $request->email;
+                if($request->email != $user->email){
+                    $this->validate($request, [
+                        'email' => 'required|email|unique:usuarios'
+                    ], [
+                        'email.required' => 'El campo de correo electrónico es obligatorio.',
+                        'email.email' => 'Por favor, introduce una dirección de correo electrónico válida.',
+                        'email.unique' => 'El correo electrónico ya está registrado en nuestra base de datos.'
+                    ]);  
+                    $user->email = $request->email;
+                }
                 if($request->has('password')){
                     $user->password = $request->password;
                 }
