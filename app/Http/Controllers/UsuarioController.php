@@ -23,7 +23,9 @@ class UsuarioController extends Controller
     public function register(Request $request){
         try {
             if($request->tipoUsuario != 0){
-                $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+                $admin = Usuario::where('token',$request->token)->
+                    where('tipoUsuario','>=', 3)->
+                    orWhere('email', $request->email)->first();
                 $this->validate($request, [
                     'email' => 'required|email|unique:usuarios'
                 ], [
