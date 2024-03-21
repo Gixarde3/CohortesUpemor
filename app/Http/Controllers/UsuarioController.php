@@ -24,8 +24,7 @@ class UsuarioController extends Controller
         try {
             if($request->tipoUsuario != 0){
                 $admin = Usuario::where('token',$request->token)->
-                    where('tipoUsuario','>=', 3)->
-                    orWhere('email', $request->email)->first();
+                    where('tipoUsuario','>=', 3)->first();
                 $this->validate($request, [
                     'email' => 'required|email|unique:usuarios'
                 ], [
@@ -136,7 +135,7 @@ class UsuarioController extends Controller
     }
     public function editUser(Request $request){
         try {
-            $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+            $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->orWhere('email', $request->email)->first();
             $this->validate($request, [
                 'email' => 'required|email|unique:usuarios'
             ], [
