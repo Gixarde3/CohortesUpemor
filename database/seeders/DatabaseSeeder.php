@@ -57,6 +57,7 @@ class DatabaseSeeder extends Seeder
             'idCreador' => 1,
             'carrera' => 'ITI',
             'periodo' => 'I',
+            'programa' => 'ITI H18',
             'anio' => 2024
         ]);
         \App\Models\Baja::factory()->create([

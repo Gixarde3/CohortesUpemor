@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('carrera');
             $table->string('periodo');
             $table->year('anio');
+            $table->string('programa');
             $table->boolean('procesado')->default(false);
             $table->unsignedBigInteger('idCreador');
             $table->foreign('idCreador')->references('id')->on('usuarios')->onDelete('cascade');

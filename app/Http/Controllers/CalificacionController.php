@@ -41,6 +41,7 @@ class CalificacionController extends Controller
             $newCalificacion->idCreador = $admin->id;
             $newCalificacion->carrera = $request->carrera;
             $newCalificacion->periodo = $request->periodo;
+            $newCalificacion->programa = $request->programa;
             $newCalificacion->anio = $request->anio;
             $success = true;
             $message = "Calificación subida correctamente";
@@ -66,6 +67,7 @@ class CalificacionController extends Controller
                 $calificacion->carrera = $request->carrera;
                 $calificacion->anio = $request->anio;
                 $calificacion->periodo = $request->periodo;
+                $calificacion->programa = $request->programa;
                 $calificacion->save();
                 $success = true;
                 $message = "Calificación editada correctamente";
