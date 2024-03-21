@@ -156,21 +156,34 @@ class UsuarioController extends Controller
                 'apM.required' => 'El campo de apellido materno es obligatorio.',
                 'tipoUsuario.required' => 'El campo de tipo de usuario es obligatorio.',
             ]);
+            $tiposUsuarios = [
+                "Usuario sin acceso",
+                "Profesor/Coordinador",
+                "Director",
+                "Administrador"
+            ];
             if ($admin) {
                 $user = Usuario::where('id', $request->id)->first();
-                $user->noEmp = $request->noEmp;
                 $user->nombre = $request->nombre;
                 $user->apP = $request->apP;
                 $user->apM = $request->apM;
                 if($user->tipoUsuario != $request->tipoUsuario){
-                    Mail::to($user->email)->send(new MailNotificacionUsuario($request->tipoUsuario === 1 ? "Director" : ($request->tipoUsuario === 2 ? "Coordinador/Profesor" : "Administrador")));
+                    $user->tipoUsuario = $request->tipoUsuario;
                     Notificaciones::create([
                         'id_usuario' => $user->id,
                         'titulo' => 'Cambio de tipo de usuario',
-                        'descripcion' => "Tu tipo de usuario ha sido cambiado a: ".($request->tipoUsuario === 1 ? "Director" : ($request->tipoUsuario === 2 ? "Coordinador/Profesor" : "Administrador"))
+                        'descripcion' => "Tu tipo de usuario ha sido cambiado a: ".($tiposUsuarios[$request->tipoUsuario])
                     ]);
+                    try{
+                        Mail::to($user->email)->send(new MailNotificacionUsuario($tiposUsuarios[$request->tipoUsuario]));
+                    }catch(\Exception $e){
+                        $message = $e->getMessage();
+                        $success = false;
+                    }
+
+                    
+                    
                 }
-                $user->tipoUsuario = $request->tipoUsuario;
                 if($request->email != $user->email){
                     $this->validate($request, [
                         'email' => 'required|email|unique:usuarios'
