@@ -20,6 +20,14 @@ class CohorteController extends Controller
     public function createCohorte(Request $request){
 
         $admin = Usuario::where('token',$request->token)->first();
+        $request->validate([
+            'periodo' => 'required',
+            'anio' => 'required',
+            'plan' => 'required',
+            'anioperiodo' => 'unique_concat:cohortes,anio,periodo'
+        ],[
+            'anioperiodo.unique_concat' => 'El conjunto de año y el periodo ya han sido registrados'
+        ]);
         if ($admin) {
             $newCohorte = new Cohorte();
             $newCohorte->periodo = $request->periodo;
@@ -52,7 +60,15 @@ class CohorteController extends Controller
      * @return \Illuminate\Http\JsonResponse La respuesta JSON con el resultado de la operación.
      */
     public function editCohorte(Request $request, $id){
-        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 2)->first();
+        $request->validate([
+            'periodo' => 'required',
+            'anio' => 'required',
+            'plan' => 'required',
+            'anioperiodoplan' => 'unique_concat:cohortes,anio,periodo,plan'
+        ],[
+            'anioperiodoplan.unique_concat' => 'El conjunto de año y el periodo ya han sido registrados'
+        ]);
         if ($admin) {
             $cohort = Cohorte::find($id);
             $cohort->periodo = $request->periodo;
@@ -79,7 +95,7 @@ class CohorteController extends Controller
      * @return \Illuminate\Http\JsonResponse La respuesta JSON que indica si se eliminó correctamente el cohorte.
      */
     public function deleteCohorte(Request $request, $id){
-        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 2)->first();
         if ($admin) {
             $cohort = Cohorte::find($id);
             $cohort->delete();

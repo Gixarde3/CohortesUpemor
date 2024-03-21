@@ -17,7 +17,7 @@ class AdmisionController extends Controller
 {
     //
     public function crearAdmision(Request $request){
-        $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 3)->first();
+        $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 1)->first();
         if($admin){
             $newAdmision = new Admision();
             $newAdmision->archivo = $this->manejarArchivo($request->file('archivo'));
@@ -38,7 +38,7 @@ class AdmisionController extends Controller
         }
     }
     public function editarAdmision(Request $request, $id){
-        $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 3)->first();
+        $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 1)->first();
         $admision = Admision::find($id);
         if($admin){
             if($admision){
@@ -67,7 +67,7 @@ class AdmisionController extends Controller
         }
     }
     public function eliminarAdmision(Request $request, $id){
-        $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 3)->first();
+        $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 1)->first();
         $admision = Admision::find($id);
         if($admin){
             if($admision){
@@ -110,7 +110,7 @@ class AdmisionController extends Controller
         }
     }
     public function procesarAdmision(Request $request, $id){
-        $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 3)->first();
+        $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 1)->first();
         $admision = Admision::find($id);
         if($admin){
             if($admision && !$admision->procesado){

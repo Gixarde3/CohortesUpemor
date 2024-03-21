@@ -64,7 +64,7 @@ class CalificacionesImport implements ToModel, WithHeadingRow, WithBatchInserts,
             'plan' => substr($row['plan_estudios'],0,3)." H".substr($row['matricula'], 4,2),
             'idCreador' => $this->idCreador
         ]);
-        $alumno = Alumno::firstOrNew([
+        $alumno = Alumno::firstOrCreate([
             'matricula' => $row['matricula'],
         ]);
         $alumno->idCohorte = $cohorte->id;

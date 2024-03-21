@@ -10,7 +10,16 @@ class GrupoController extends Controller
 {
     //
     public function crearGrupo(Request $request){
-        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 1)->first();
+        $request->validate([
+            'clave' => 'required|unique:grupos,clave',
+            'nombre' => 'required',
+            'letra' => 'required',
+            'grado' => 'required',
+            'periodo' => 'required'
+        ],[
+            'clave.unique' => 'La clave ya ha sido registrada'
+        ]);
         if (!$admin) {
             $success = false;
             $message = "No cuentas con los permisos necesarios";
@@ -34,7 +43,16 @@ class GrupoController extends Controller
         ]);
     }
     public function editarGrupo(Request $request, $id){
-        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 1)->first();
+        $request->validate([
+            'clave' => 'required|unique:grupos,clave',
+            'nombre' => 'required',
+            'letra' => 'required',
+            'grado' => 'required',
+            'periodo' => 'required'
+        ],[
+            'clave.unique' => 'La clave ya ha sido registrada'
+        ]);
         if (!$admin) {
             $success = false;
             $message = "No cuentas con los permisos necesarios";
@@ -63,7 +81,7 @@ class GrupoController extends Controller
         ]);
     }
     public function eliminarGrupo(Request $request, $id){
-        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 1)->first();
         if (!$admin) {
             $success = false;
             $message = "No cuentas con los permisos necesarios";

@@ -24,13 +24,36 @@ class UsuarioController extends Controller
         try {
             if($request->tipoUsuario != 0){
                 $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+                $this->validate($request, [
+                    'email' => 'required|email|unique:usuarios'
+                ], [
+                    'email.required' => 'El campo de correo electrónico es obligatorio.',
+                    'email.email' => 'Por favor, introduce una dirección de correo electrónico válida.',
+                    'email.unique' => 'El correo electrónico ya está registrado en nuestra base de datos.'
+                ]);                    
+                $request->validate([
+                    'foto'=>'required|image'
+                ], [
+                    'foto.required' => 'El campo de foto es obligatorio.',
+                    'foto.image' => 'Por favor, introduce una imagen válida.'
+                ]);
+                $request->validate([
+                    'noEmp' => 'required|unique:usuarios',
+                    'nombre' => 'required',
+                    'apP' => 'required',
+                    'apM' => 'required',
+                    'tipoUsuario' => 'required',
+                    'password' => 'required'
+                ], [
+                    'noEmp.required' => 'El campo de número de empleado es obligatorio.',
+                    'nombre.required' => 'El campo de nombre es obligatorio.',
+                    'apP.required' => 'El campo de apellido paterno es obligatorio.',
+                    'apM.required' => 'El campo de apellido materno es obligatorio.',
+                    'tipoUsuario.required' => 'El campo de tipo de usuario es obligatorio.',
+                    'password.required' => 'El campo de contraseña es obligatorio.',
+                    'noEmp.unique' => 'El número de empleado ya está registrado en nuestra base de datos.'
+                ]);
                 if ($admin) {
-                    $this->validate($request, [
-                        'email' => 'required|email|unique:usuarios'
-                    ]);
-                    $request->validate([
-                        'foto'=>'required|image'
-                    ]);
                     $newUser = new Usuario();
                     $newUser->noEmp = $request->noEmp;
                     $newUser->nombre = $request->nombre;
@@ -53,12 +76,6 @@ class UsuarioController extends Controller
                     $message = "No cuentas con los permisos necesarios";
                 }
             }else{
-                $this->validate($request, [
-                    'email' => 'required|email|unique:usuarios'
-                ]);
-                $request->validate([
-                    'foto'=>'required|image'
-                ]);
                 $newUser = new Usuario();
                 $newUser->noEmp = $request->noEmp;
                 $newUser->nombre = $request->nombre;
@@ -118,6 +135,35 @@ class UsuarioController extends Controller
     public function editUser(Request $request){
         try {
             $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+            $this->validate($request, [
+                'email' => 'required|email|unique:usuarios'
+            ], [
+                'email.required' => 'El campo de correo electrónico es obligatorio.',
+                'email.email' => 'Por favor, introduce una dirección de correo electrónico válida.',
+                'email.unique' => 'El correo electrónico ya está registrado en nuestra base de datos.'
+            ]);                    
+            $request->validate([
+                'foto'=>'required|image'
+            ], [
+                'foto.required' => 'El campo de foto es obligatorio.',
+                'foto.image' => 'Por favor, introduce una imagen válida.'
+            ]);
+            $request->validate([
+                'noEmp' => 'required|unique:usuarios',
+                'nombre' => 'required',
+                'apP' => 'required',
+                'apM' => 'required',
+                'tipoUsuario' => 'required',
+                'password' => 'required'
+            ], [
+                'noEmp.required' => 'El campo de número de empleado es obligatorio.',
+                'nombre.required' => 'El campo de nombre es obligatorio.',
+                'apP.required' => 'El campo de apellido paterno es obligatorio.',
+                'apM.required' => 'El campo de apellido materno es obligatorio.',
+                'tipoUsuario.required' => 'El campo de tipo de usuario es obligatorio.',
+                'password.required' => 'El campo de contraseña es obligatorio.',
+                'noEmp.unique' => 'El número de empleado ya está registrado en nuestra base de datos.'
+            ]);
             if ($admin) {
                 $user = Usuario::where('id', $request->id)->first();
                 $user->noEmp = $request->noEmp;
@@ -163,6 +209,11 @@ class UsuarioController extends Controller
     public function deleteUser(Request $request){
         try {
             $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+            $request->validate([
+                'id' => 'required'
+            ],[
+                'id.required' => 'El campo de ID es obligatorio.'
+            ]);
             if ($admin) {
                 $user = Usuario::where('id', $request->id)->first();
                 $user->delete();

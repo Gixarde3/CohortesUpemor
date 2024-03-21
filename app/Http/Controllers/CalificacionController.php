@@ -25,7 +25,16 @@ class CalificacionController extends Controller
         }
     }
     public function subirCalificacion(Request $request){
-        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 1)->first();
+        $request->validate([
+            'archivo' => 'required',
+            'carrera' => 'required',
+            'periodo' => 'required',
+            'anio' => 'required',
+            'anioperiodocarrera' => 'unique_concat:calificaciones,anio,periodo,carrera'
+        ],[
+            'anioperiodo.unique_concat' => 'El conjunto de año y el periodo ya han sido registrados'
+        ]);
         if ($admin) {
             $newCalificacion = new Calificacion();
             $newCalificacion->archivo = $this->manejarArchivo($request->file('archivo'));
@@ -46,7 +55,7 @@ class CalificacionController extends Controller
         ]);
     }
     public function editarCalificaciones(Request $request, $id){
-        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 1)->first();
         if ($admin) {
             $calificacion = Calificacion::find($id);
             if($calificacion){
@@ -74,7 +83,7 @@ class CalificacionController extends Controller
         ]);
     }
     public function eliminarCalificaciones(Request $request, $id){
-        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 1)->first();
         if ($admin) {
             $calificacion = Calificacion::find($id);
             if($calificacion){

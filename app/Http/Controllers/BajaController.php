@@ -16,7 +16,7 @@ class BajaController extends Controller
     //
     public function crearBajas(Request $request)
     {
-        $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 3)->first();
+        $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 2)->first();
         if ($admin) {
             $file = $request->file('archivo');
             $fileName = $this->manejarArchivo($file);
@@ -40,7 +40,7 @@ class BajaController extends Controller
     }
     public function eliminarBajas(Request $request, $id)
     {
-        $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 3)->first();
+        $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 2)->first();
         if ($admin) {
             $baja = Baja::find($id);
             $this->deleteFile($baja->archivo);
@@ -59,7 +59,7 @@ class BajaController extends Controller
     }
     public function actualizarBajas(Request $request, $id)
     {
-        $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 3)->first();
+        $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 2)->first();
         if ($admin) {
             $baja = Baja::find($id);
             if($request->hasFile('archivo')){
@@ -122,7 +122,7 @@ class BajaController extends Controller
         ]);
     }
     public function procesarBajas(Request $request, $id){
-        $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 3)->first();
+        $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 2)->first();
         if ($admin) {
             $baja = Baja::find($id);
             if($baja && $baja->procesado == false){

@@ -18,29 +18,36 @@ class CalificacionProcesadaController extends Controller
      * Para esto hace uso del paquete Laravel Excel.
      */
     public function importarExcel(Request $request, $id){
-        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
+        $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 1)->first();
         $calificacion = Calificacion::find($id);
-        if($admin){
-            if($calificacion && $calificacion->procesado == false){
-                $archivo = $calificacion->archivo;
-                $archivo = public_path('excel/'.$archivo);
-                Excel::import(new CalificacionesImportMulti($admin->id, $calificacion->id), $archivo); // Fix the undefined type error
-                $calificacion->procesado = true;
-                $calificacion -> save();
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Calificaciones procesadas correctamente'
-                ]);
+        try{
+            if($admin){
+                if($calificacion && $calificacion->procesado == false){
+                    $archivo = $calificacion->archivo;
+                    $archivo = public_path('excel/'.$archivo);
+                    Excel::import(new CalificacionesImportMulti($admin->id, $calificacion->id), $archivo); // Fix the undefined type error
+                    $calificacion->procesado = true;
+                    $calificacion -> save();
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Calificaciones procesadas correctamente'
+                    ]);
+                }else{
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'No se encontraron calificaciones'
+                    ]);
+                }
             }else{
                 return response()->json([
                     'success' => false,
-                    'message' => 'No se encontraron calificaciones'
+                    'message' => 'No cuentas con los permisos necesarios'
                 ]);
             }
-        }else{
+        }catch(\Exception $e){
             return response()->json([
                 'success' => false,
-                'message' => 'No cuentas con los permisos necesarios'
+                'message' => 'Error al procesar las calificaciones, el formato del archivo puede no ser el correcto.'
             ]);
         }
     }
