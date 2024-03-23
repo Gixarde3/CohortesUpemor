@@ -61,6 +61,7 @@
         }
         img{
             max-width: 100%;
+            width: 200px;
         }
     </style>
 </head>
@@ -72,12 +73,6 @@
         </div>
         <h1 style="text-align: center; color: #F50003;">Se ha enviado una solicitud de restauración de contraseña</h1>
         <h2>El código de restauración es: {{$codigo}}</h2>
-        <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
-            <a href={{ $url }} style="background-color: #F50003; color: white; padding: 10px 20px; text-decoration: none; margin-bottom:1rem;">Cambiar contraseña</a>
-        </div>
-        <p class="aclaracion">Si el enlace no funcion copia y pega este</p>
-        <p class="aclaracion">{{ $url }}</p>
-        
     </main> 
 </body>
 </html>

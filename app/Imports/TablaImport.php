@@ -17,6 +17,19 @@ class TablaImport implements ToCollection, WithHeadingRow
     {
         $this->idAdmision = $idAdmision;
     }
+    /**
+     * Importa una colección de datos y crea registros en la tabla AdmisionData.
+     * 
+     * Esta función recibe una colección de datos y crea registros en la tabla AdmisionData
+     * utilizando los valores de la colección. Los registros se crean para cada fila de la
+     * colección, excepto la primera fila que se omite. Los valores de las columnas 'carrera',
+     * 'solicitudes' y 'examenes_presentados' se obtienen de las columnas correspondientes
+     * de la fila actual. Además, se utiliza un arreglo de carreras para mapear los nombres
+     * de las carreras a sus respectivos códigos.
+     * 
+     * @param Collection $collection La colección de datos a importar.
+     * @return void
+     */
     public function collection(Collection $collection)
     {
         $rowCounter = 0;

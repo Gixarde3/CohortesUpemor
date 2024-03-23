@@ -28,6 +28,12 @@ class InscritosImport implements ToCollection, WithHeadingRow, WithBatchInserts,
         $this->idCreador = $idCreador;
         $this->idAdmision = $idAdmision;
     }
+    /**
+     * Importa los datos de inscritos desde un archivo y los guarda en la base de datos.
+     *
+     * @param Collection $rows Los datos de los inscritos a importar.
+     * @return void
+     */
     public function collection(Collection $rows)
     {
         foreach($rows as $row){

@@ -20,6 +20,17 @@ use Mockery\Matcher\Not;
 class UsuarioController extends Controller
 {
     //
+    /**
+     * Registra un nuevo usuario.
+     *
+     * Esta función registra un nuevo usuario en el sistema. Verifica los permisos del administrador y valida los datos de entrada.
+     * Si el administrador tiene los permisos necesarios, se crea un nuevo usuario con los datos proporcionados y se envían notificaciones por correo electrónico.
+     * Si el administrador no tiene los permisos necesarios, se muestra un mensaje de error.
+     * Si el tipo de usuario es 0, se crea un nuevo usuario sin verificar los permisos del administrador y se envían notificaciones por correo electrónico a todos los administradores.
+     *
+     * @param Request $request La solicitud HTTP con los datos del usuario a registrar.
+     * @return \Illuminate\Http\JsonResponse Una respuesta JSON que indica si el usuario se registró correctamente, el correo electrónico del usuario y un mensaje de éxito o error.
+     */
     public function register(Request $request){
         try {
             if($request->tipoUsuario != 0){
@@ -112,6 +123,17 @@ class UsuarioController extends Controller
             'message'=>$message
         ]);
     }
+    /**
+     * Obtiene un usuario por su hash.
+     *
+     * Esta función recibe un objeto Request y un hash como parámetros de entrada.
+     * Busca un usuario en la base de datos que coincida con el hash proporcionado.
+     * Devuelve una respuesta JSON con un indicador de éxito y el usuario encontrado.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $hash
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getUserByHash(Request $request, $hash){
         $user = Usuario::where('token', $hash)->first();
         return response()->json([
@@ -119,6 +141,17 @@ class UsuarioController extends Controller
             'usuario' => $user
         ]);
     }
+
+    /**
+     * Obtiene todos los usuarios.
+     *
+     * Esta función recibe un objeto Request como parámetro de entrada.
+     * Obtiene todos los usuarios de la base de datos.
+     * Devuelve una respuesta JSON con un indicador de éxito y la lista de usuarios.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getAllUsers(Request $request){
         $users = Usuario::all();
         return response()->json([
@@ -126,6 +159,18 @@ class UsuarioController extends Controller
             'usuarios' => $users
         ]);
     }
+
+    /**
+     * Obtiene un usuario por su ID.
+     *
+     * Esta función recibe un objeto Request y un ID como parámetros de entrada.
+     * Busca un usuario en la base de datos que coincida con el ID proporcionado.
+     * Devuelve una respuesta JSON con un indicador de éxito y el usuario encontrado.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getUserById(Request $request, $id){
         $user = Usuario::where('id', $id)->first();
         return response()->json([
@@ -133,6 +178,20 @@ class UsuarioController extends Controller
             'usuario' => $user
         ]);
     }
+    /**
+     * Edita un usuario en el sistema.
+     *
+     * Esta función recibe una solicitud HTTP y realiza las siguientes acciones:
+     * - Verifica si el usuario que realiza la solicitud tiene los permisos necesarios.
+     * - Valida los campos de la solicitud, como el nombre, apellido paterno, apellido materno y tipo de usuario.
+     * - Actualiza los datos del usuario en la base de datos, como el nombre, apellido paterno, apellido materno, tipo de usuario, correo electrónico, número de empleado y foto.
+     * - Envía una notificación al usuario si se ha cambiado su tipo de usuario.
+     * - Envía un correo electrónico al usuario si se ha cambiado su tipo de usuario.
+     * - Retorna una respuesta JSON indicando si la edición del usuario fue exitosa, el correo electrónico utilizado en la solicitud y un mensaje de éxito o error.
+     *
+     * @param Request $request La solicitud HTTP que contiene los datos del usuario a editar.
+     * @return \Illuminate\Http\JsonResponse La respuesta JSON que indica si la edición del usuario fue exitosa, el correo electrónico utilizado en la solicitud y un mensaje de éxito o error.
+     */
     public function editUser(Request $request){
         try {
             $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->orWhere('email', $request->email)->first();
@@ -229,6 +288,14 @@ class UsuarioController extends Controller
             'message'=>$message
         ]);
     }
+    /**
+     * Elimina un usuario.
+     *
+     * Esta función elimina un usuario de la base de datos. Requiere que el usuario que realiza la solicitud sea un administrador con un nivel de permiso igual o superior a 3. Si el usuario cumple con los requisitos, se elimina el usuario especificado por su ID. Si el usuario no cumple con los requisitos, se devuelve un mensaje de error.
+     *
+     * @param Request $request La solicitud HTTP que contiene el token de autenticación y el ID del usuario a eliminar.
+     * @return \Illuminate\Http\JsonResponse Una respuesta JSON que indica si se eliminó el usuario correctamente, el correo electrónico asociado a la solicitud y un mensaje de éxito o error.
+     */
     public function deleteUser(Request $request){
         try {
             $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
@@ -256,6 +323,18 @@ class UsuarioController extends Controller
             'message'=>$message
         ]);
     }
+    /**
+     * Maneja las imágenes subidas por los usuarios.
+     *
+     * Esta función recibe un archivo y lo guarda en el sistema de almacenamiento.
+     * Genera un nombre único para el archivo y le asigna la extensión original.
+     * Luego, guarda el archivo en la carpeta "public" del sistema de almacenamiento.
+     * Mueve el archivo de la carpeta de almacenamiento a la carpeta pública.
+     * Finalmente, elimina el archivo de la carpeta de almacenamiento y devuelve el nombre del archivo guardado.
+     *
+     * @param  \Illuminate\Http\UploadedFile  $file  El archivo a manejar.
+     * @return string  El nombre del archivo guardado.
+     */
     public function manejarImagenes($file){
         $nameFile = uniqid();
         $extensionFile = '.' . $file->getClientOriginalExtension();
@@ -266,6 +345,18 @@ class UsuarioController extends Controller
         Storage::delete($storageRoute);
         return $nameFile.$extensionFile;
     }
+    /**
+     * Desactiva un usuario.
+     *
+     * Esta función desactiva un usuario en base al ID proporcionado. 
+     * Verifica si el usuario que realiza la acción tiene los permisos necesarios.
+     * Si el usuario tiene los permisos, se desactiva el usuario y se envía un correo de notificación.
+     * Si el usuario no tiene los permisos, se devuelve un mensaje de error.
+     *
+     * @param Request $request El objeto Request que contiene los datos de la solicitud.
+     * @param int $id El ID del usuario que se desea desactivar.
+     * @return \Illuminate\Http\JsonResponse Una respuesta JSON que indica si la desactivación fue exitosa y un mensaje correspondiente.
+     */
     public function desactivar(Request $request, $id){
         $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
         if ($admin) {
@@ -284,6 +375,17 @@ class UsuarioController extends Controller
             'message'=>$message
         ]);
     }
+    /**
+     * Activa un usuario.
+     *
+     * Esta función activa un usuario en el sistema. Para activar un usuario, se requiere un token de administrador y el ID del usuario a activar.
+     * Si el token de administrador y el tipo de usuario son válidos, se activa el usuario y se envía una notificación por correo electrónico.
+     * Si el token de administrador no es válido o el tipo de usuario no cumple con los requisitos, se devuelve un mensaje de error.
+     *
+     * @param Request $request El objeto Request que contiene los datos de la solicitud.
+     * @param int $id El ID del usuario a activar.
+     * @return \Illuminate\Http\JsonResponse Una respuesta JSON que indica si el usuario se activó correctamente y un mensaje asociado.
+     */
     public function activar(Request $request, $id){
         $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 3)->first();
         if ($admin) {

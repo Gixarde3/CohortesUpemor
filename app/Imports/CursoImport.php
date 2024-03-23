@@ -25,6 +25,12 @@ class CursoImport implements ToCollection, WithHeadingRow, WithBatchInserts, Wit
     { 
         $this->idAdmision = $idAdmision;
     }
+    /**
+     * Importa una colección de datos y crea registros de cursos y aspirantes.
+     *
+     * @param Collection $collection La colección de datos a importar.
+     * @return void
+     */
     public function collection(Collection $collection)
     {
         //

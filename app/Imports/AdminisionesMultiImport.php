@@ -12,6 +12,15 @@ class AdminisionesMultiImport implements WithMultipleSheets
         $this->idAdmision = $idAdmision;
         $this->idCreador = $idCreador;
     }
+    /**
+     * Devuelve un array con las hojas de cálculo a importar.
+     *
+     * Esta función devuelve un array que contiene las hojas de cálculo a importar en el archivo AdminisionesMultiImport.
+     * Cada elemento del array representa una hoja de cálculo y se asocia con una instancia de una clase de importación específica.
+     * Las hojas de cálculo se identifican por su nombre y se asocian con una instancia de una clase de importación correspondiente.
+     * 
+     * @return array Un array que contiene las hojas de cálculo a importar.
+     */
     public function sheets(): array
     {
         return [

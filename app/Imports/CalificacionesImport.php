@@ -28,6 +28,12 @@ class CalificacionesImport implements ToModel, WithHeadingRow, WithBatchInserts,
         $this->idCreador = $idCreador;
         $this->idCalificacion = $idCalificacion;
     }
+    /**
+     * Genera un modelo de importación de calificaciones a partir de una fila de datos.
+     *
+     * @param array $row Los datos de la fila de importación.
+     * @return CalificacionProcesada|null El modelo de calificación procesada o null si no se encuentra el nombre del grupo.
+     */
     public function model(array $row)
     {
         $grado = null;

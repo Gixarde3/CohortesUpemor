@@ -33,6 +33,13 @@ class BajaImport implements ToCollection, WithHeadingRow, WithBatchInserts, With
         $this->periodo = $periodo;
         $this->idCreador = $idCreador;
     }
+   
+    /**
+     * Importa los datos de una colección y realiza diversas operaciones en base a los datos importados.
+     *
+     * @param Collection $rows La colección de filas que se van a importar.
+     * @return void
+     */
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) 

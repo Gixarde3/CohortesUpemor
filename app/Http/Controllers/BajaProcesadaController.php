@@ -9,6 +9,13 @@ use App\Models\Alumno;
 class BajaProcesadaController extends Controller
 {
     //
+    /**
+     * Obtiene las bajas procesadas por periodo para un cohorte específico.
+     *
+     * @param Request $request El objeto de solicitud HTTP.
+     * @param int $idCohorte El ID del cohorte.
+     * @return \Illuminate\Http\JsonResponse La respuesta JSON con los resultados de las bajas procesadas.
+     */
     public function getBajasByPeriodo(Request $request, $idCohorte){
         $bajas = BajaProcesada::join('alumnos', 'alumnos.id', '=', 'baja_procesadas.idAlumno')
         ->selectRaw('baja_procesadas.periodo, count(*) as total')
@@ -28,6 +35,13 @@ class BajaProcesadaController extends Controller
             'resultados' => $bajas
         ]);
     }
+    /**
+     * Obtiene las bajas de alumnos para una cohorte específica.
+     *
+     * @param Request $request El objeto de solicitud HTTP.
+     * @param int $idCohorte El ID de la cohorte.
+     * @return \Illuminate\Http\JsonResponse La respuesta JSON con los resultados de las bajas.
+     */
     public function getBajas(Request $request, $idCohorte){
         $bajas = Alumno::leftjoin('baja_procesadas', 'baja_procesadas.idAlumno', '=', 'alumnos.id')
         ->selectRaw('SUM(IF(alumnos.activo, 1, 0)) as activos, 
@@ -40,6 +54,15 @@ class BajaProcesadaController extends Controller
             'resultados' => $bajas
         ]);
     }
+    /**
+     * Obtiene las bajas procesadas por rango de años y carrera.
+     *
+     * @param Request $request El objeto de solicitud HTTP.
+     * @param int $anio1 El año inicial del rango.
+     * @param int $anio2 El año final del rango.
+     * @param string $carrera La carrera de los alumnos.
+     * @return \Illuminate\Http\JsonResponse La respuesta JSON con los resultados de las bajas procesadas.
+     */
     public function getBajasByRango(Request $request, $anio1, $anio2, $carrera)
     {
         if($anio1 > $anio2) 
@@ -58,6 +81,13 @@ class BajaProcesadaController extends Controller
             'resultados' => $bajas
         ]);
     }
+    /**
+     * Obtiene el número de alumnos activos en un cohorte específico.
+     *
+     * @param Request $request El objeto de solicitud HTTP.
+     * @param int $idCohorte El ID del cohorte.
+     * @return \Illuminate\Http\JsonResponse La respuesta JSON con el número de alumnos activos.
+     */
     public function getAlumnos(Request $request, $idCohorte){
         $activos = Alumno::where('idCohorte', $idCohorte)
         ->count();

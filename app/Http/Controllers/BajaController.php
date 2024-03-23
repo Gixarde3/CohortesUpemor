@@ -14,6 +14,14 @@ use Maatwebsite\Excel\Facades\Excel; // Import the Excel class
 class BajaController extends Controller
 {
     //
+    /**
+     * Crea bajas.
+     *
+     * Esta función se utiliza para crear registros de bajas en el sistema. Verifica si el usuario que realiza la solicitud tiene los permisos necesarios. Si es así, guarda el archivo adjunto y crea un nuevo registro de baja en la base de datos. Devuelve una respuesta JSON indicando si la operación fue exitosa y un mensaje descriptivo.
+     *
+     * @param Request $request El objeto Request que contiene los datos de la solicitud.
+     * @return \Illuminate\Http\JsonResponse La respuesta JSON que indica si la operación fue exitosa y un mensaje descriptivo.
+     */
     public function crearBajas(Request $request)
     {
         $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 2)->first();
@@ -38,6 +46,13 @@ class BajaController extends Controller
             'message' => $message
         ]);
     }
+    /**
+     * Elimina las bajas de acuerdo al ID proporcionado.
+     *
+     * @param Request $request La solicitud HTTP que contiene el token de autenticación.
+     * @param int $id El ID de la baja a eliminar.
+     * @return \Illuminate\Http\JsonResponse La respuesta JSON que indica si se eliminaron las bajas correctamente.
+     */
     public function eliminarBajas(Request $request, $id)
     {
         $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 2)->first();
@@ -57,6 +72,18 @@ class BajaController extends Controller
             'message' => $message
         ]);
     }
+    /**
+     * Actualiza las bajas.
+     *
+     * Esta función actualiza las bajas en el sistema. Verifica si el usuario que realiza la solicitud es un administrador con permisos suficientes.
+     * Si el usuario es un administrador válido, se actualiza la baja correspondiente al ID proporcionado.
+     * Se puede adjuntar un archivo a la solicitud para actualizar el archivo adjunto de la baja.
+     * La función devuelve una respuesta JSON con un indicador de éxito y un mensaje.
+     *
+     * @param Request $request El objeto Request que contiene los datos de la solicitud.
+     * @param int $id El ID de la baja que se va a actualizar.
+     * @return \Illuminate\Http\JsonResponse La respuesta JSON con el indicador de éxito y el mensaje.
+     */
     public function actualizarBajas(Request $request, $id)
     {
         $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 2)->first();
@@ -82,6 +109,13 @@ class BajaController extends Controller
             'message' => $message
         ]);
     }
+    /**
+     * Descarga una baja específica.
+     *
+     * @param Request $request La solicitud HTTP recibida.
+     * @param int $id El ID de la baja a descargar.
+     * @return mixed La respuesta HTTP con la descarga de la baja si se encuentra, o un JSON con un mensaje de error si no se encuentra.
+     */
     public function descargarBajas(Request $request, $id)
     {
         $baja = Baja::find($id);
@@ -95,6 +129,12 @@ class BajaController extends Controller
         }
     }
 
+    /**
+     * Obtiene todas las bajas.
+     *
+     * @param Request $request El objeto de solicitud HTTP.
+     * @return \Illuminate\Http\JsonResponse La respuesta JSON con las bajas obtenidas.
+     */
     public function getBajas(Request $request)
     {
         $bajas = Baja::all();
@@ -106,12 +146,21 @@ class BajaController extends Controller
             'bajas' => $bajas
         ]);
     }
-    public function getBajaById(Request $request, $id){
+
+    /**
+     * Obtiene una baja por su ID.
+     *
+     * @param Request $request El objeto de solicitud HTTP.
+     * @param int $id El ID de la baja a obtener.
+     * @return \Illuminate\Http\JsonResponse La respuesta JSON con la baja obtenida.
+     */
+    public function getBajaById(Request $request, $id)
+    {
         $baja = Baja::find($id);
-        if($baja){
+        if ($baja) {
             $success = true;
             $message = 'Baja obtenida correctamente';
-        }else{
+        } else {
             $success = false;
             $message = "No se encontró la baja con ese ID";
         }
@@ -121,6 +170,19 @@ class BajaController extends Controller
             'baja' => $baja
         ]);
     }
+    /**
+     * Procesa las bajas de calificaciones.
+     *
+     * Esta función procesa las bajas de calificaciones de los usuarios administradores.
+     * Verifica los permisos del administrador y busca la baja de calificaciones correspondiente al ID proporcionado.
+     * Si la baja existe y no ha sido procesada previamente, importa un archivo Excel utilizando la clase BajaImport.
+     * Marca la baja como procesada y guarda los cambios en la base de datos.
+     * Finalmente, devuelve una respuesta JSON indicando el éxito del procesamiento y un mensaje descriptivo.
+     *
+     * @param Request $request El objeto Request que contiene los datos de la solicitud.
+     * @param int $id El ID de la baja de calificaciones a procesar.
+     * @return \Illuminate\Http\JsonResponse La respuesta JSON con el resultado del procesamiento.
+     */
     public function procesarBajas(Request $request, $id){
         $admin = Usuario::where('token', $request->token)->where('tipoUsuario', '>=', 2)->first();
         if ($admin) {
@@ -129,7 +191,18 @@ class BajaController extends Controller
                 
                 $archivo = $baja->archivo;
                 $archivo = public_path('excel/'.$archivo);
-                Excel::import(new BajaImport($id, $baja->periodo, $baja->idUsuario), $archivo); // Fix the undefined type error
+                try{
+                    Excel::import(new BajaImport($id, $baja->periodo, $baja->idUsuario), $archivo); // Fix the undefined type error
+                }catch(\Exception $e){
+                    if(strstr($e->getMessage(), "Undefined array key")){
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'El periodo ingresado no corresponde con el periodo de cierre del archivo cargado'
+                        ]);
+                    
+                    }
+                }
+                
                 $baja->procesado = true;
                 $baja->save();
                 return response()->json([
@@ -149,6 +222,12 @@ class BajaController extends Controller
             'message' => $message
         ]);
     }
+    /**
+     * Maneja el archivo recibido y lo guarda en una ubicación pública.
+     *
+     * @param  \Illuminate\Http\UploadedFile  $file  El archivo recibido.
+     * @return string  El nombre del archivo generado.
+     */
     public function manejarArchivo($file)
     {
         $nameFile = uniqid();
@@ -160,6 +239,13 @@ class BajaController extends Controller
         Storage::delete($storageRoute);
         return $nameFile . $extensionFile;
     }
+    /**
+     * Descarga un archivo desde la carpeta de almacenamiento.
+     *
+     * @param Request $request La solicitud HTTP.
+     * @param string $filename El nombre del archivo a descargar.
+     * @return \Illuminate\Http\Response La respuesta HTTP con el archivo adjunto.
+     */
     public function download(Request $request, $filename)
     {
         // Define la ruta al archivo dentro de la carpeta de almacenamiento (por ejemplo, en la carpeta "public")
@@ -169,6 +255,12 @@ class BajaController extends Controller
         return response()->file($rutaArchivo, ['Content-Disposition' => 'attachment; filename="' . $filename . '"']);
     }
 
+    /**
+     * Elimina un archivo de la carpeta de almacenamiento.
+     *
+     * @param string $fileName El nombre del archivo a eliminar.
+     * @return bool Devuelve true si el archivo se eliminó correctamente, de lo contrario devuelve false.
+     */
     public function deleteFile($fileName)
     {
         $filePath = public_path('excel/' . $fileName);
