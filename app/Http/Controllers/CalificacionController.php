@@ -8,6 +8,7 @@ use App\Models\Usuario;
 use App\Models\Calificacion;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use App\Models\CalificacionProcesada;
 class CalificacionController extends Controller
 {
     /**
@@ -97,6 +98,8 @@ class CalificacionController extends Controller
                 if(request()->hasFile('archivo')){
                     $this->deleteFile($calificacion->archivo);
                     $calificacion->archivo = $this->manejarArchivo($request->file('archivo'));
+                    CalificacionProcesada::where('idCalificacion', $calificacion->id)->delete();
+                    $calificacion->procesado = false;
                 }
                 $calificacion->carrera = $request->carrera;
                 $calificacion->anio = $request->anio;

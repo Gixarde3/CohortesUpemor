@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Usuario;
 use App\Models\Baja;
 use App\Imports\BajaImport;
+use App\Models\BajaProcesada;
 use Maatwebsite\Excel\Facades\Excel; // Import the Excel class
 
 class BajaController extends Controller
@@ -94,6 +95,8 @@ class BajaController extends Controller
                 $file = $request->file('archivo');
                 $fileName = $this->manejarArchivo($file);
                 $baja->archivo = $fileName;
+                BajaProcesada::where('idBaja', $id)->delete();
+                $baja->procesado = false;
             };
             $baja->periodo = $request->periodo;
             $baja->save();
