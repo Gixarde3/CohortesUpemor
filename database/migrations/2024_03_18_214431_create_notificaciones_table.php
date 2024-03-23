@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('id_usuario')->constrained('usuarios')->onDelete('cascade');
             $table->string('titulo');
             $table->string('descripcion');
+            $table->boolean('vista')->default(false);
             $table->timestamps();
         });
     }

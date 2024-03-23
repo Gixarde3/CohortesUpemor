@@ -28,6 +28,7 @@ use App\Models\Calificacion;
 
 Route::group(['controller' => NotificacionesController::class], function () {
     Route::get('notificaciones/{token}', 'getNotificaciones');
+    Route::get('notificaciones/pendientes/{token}', 'getNotificacionesPendientes');
 });
 
 Route::group(['controller' => LoginController::class], function () {
