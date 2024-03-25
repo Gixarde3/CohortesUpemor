@@ -77,7 +77,7 @@ Route::controller(CalificacionController::class)->group(function(){
     Route::get('calificaciones','getCalificaciones');
     Route::post('calificacion/delete/{id}','eliminarCalificaciones');
     Route::post('calificacion/edit/{id}','editarCalificaciones');
-    Route::get('calificacion/download/{fileName}','download');
+    Route::get('calificacion/download/{id}','download');
     Route::get('calificacion/{id}', 'getCalificacionById');
 });
 

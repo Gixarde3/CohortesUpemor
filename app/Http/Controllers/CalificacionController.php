@@ -193,8 +193,10 @@ class CalificacionController extends Controller
      * @param  string  $filename  El nombre del archivo a descargar.
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse  La respuesta HTTP con el archivo adjunto.
      */
-    public function download(Request $request, $filename)
+    public function download(Request $request, $id)
     {
+        $calificacion = Calificacion::find($id);
+        $filename = $calificacion->archivo;
         // Define la ruta al archivo dentro de la carpeta de almacenamiento (por ejemplo, en la carpeta "public")
         $rutaArchivo = public_path('excel/'.$filename);
 
