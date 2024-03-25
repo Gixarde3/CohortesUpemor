@@ -50,7 +50,7 @@ class UsuarioController extends Controller
                     'foto.image' => 'Por favor, introduce una imagen válida.'
                 ]);
                 $request->validate([
-                    'noEmp' => 'required|unique:usuarios',
+                    'noEmp' => 'required|unique:usuarios|numeric|max_digits:4',
                     'nombre' => 'required',
                     'apP' => 'required',
                     'apM' => 'required',
@@ -63,7 +63,8 @@ class UsuarioController extends Controller
                     'apM.required' => 'El campo de apellido materno es obligatorio.',
                     'tipoUsuario.required' => 'El campo de tipo de usuario es obligatorio.',
                     'password.required' => 'El campo de contraseña es obligatorio.',
-                    'noEmp.unique' => 'El número de empleado ya está registrado en nuestra base de datos.'
+                    'noEmp.unique' => 'El número de empleado ya está registrado en nuestra base de datos.',
+                    'noEmp.max' => 'El número de empleado no puede tener más de 4 dígitos.'
                 ]);
                 if ($admin) {
                     $newUser = new Usuario();
@@ -209,11 +210,14 @@ class UsuarioController extends Controller
                 'apP' => 'required',
                 'apM' => 'required',
                 'tipoUsuario' => 'required',
+                'noEmp' => 'numeric|max_digits:4'
             ], [
                 'nombre.required' => 'El campo de nombre es obligatorio.',
                 'apP.required' => 'El campo de apellido paterno es obligatorio.',
                 'apM.required' => 'El campo de apellido materno es obligatorio.',
                 'tipoUsuario.required' => 'El campo de tipo de usuario es obligatorio.',
+                'noEmp.max_digits' => 'El número de empleado no puede tener más de 4 dígitos.',
+                'noEmp.numeric' => 'El número de empleado debe ser un número.'
             ]);
             $tiposUsuarios = [
                 "Usuario sin acceso",
