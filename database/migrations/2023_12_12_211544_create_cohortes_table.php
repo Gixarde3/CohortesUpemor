@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('cohortes', function (Blueprint $table) {
             $table->id();
-            $table->string('periodo');
+            $table->string('periodo', 1);
             $table->year('anio');
-            $table->string('plan');
+            $table->string('plan', 30);
             $table->unsignedBigInteger('idCreador');
             $table->foreign('idCreador')->references('id')->on('usuarios')->onDelete('cascade');
             $table->timestamps();

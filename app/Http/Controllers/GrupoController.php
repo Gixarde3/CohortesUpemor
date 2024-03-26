@@ -32,36 +32,43 @@ class GrupoController extends Controller
      */
     public function crearGrupo(Request $request){
         $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 1)->first();
-        $request->validate([
-            'clave' => 'required|unique:grupos,clave',
-            'nombre' => 'required',
-            'letra' => 'required',
-            'grado' => 'required',
-            'periodo' => 'required'
-        ],[
-            'clave.unique' => 'La clave ya ha sido registrada'
-        ]);
-        if (!$admin) {
-            $success = false;
-            $message = "No cuentas con los permisos necesarios";
+        try{
+            $request->validate([
+                'clave' => 'required|unique:grupos,clave',
+                'nombre' => 'required',
+                'letra' => 'required',
+                'grado' => 'required',
+                'periodo' => 'required'
+            ],[
+                'clave.unique' => 'La clave ya ha sido registrada'
+            ]);
+            if (!$admin) {
+                $success = false;
+                $message = "No cuentas con los permisos necesarios";
+                return response()->json([
+                    'success' => $success,
+                    'message' => $message
+                ]);
+            }
+            $newGrupo = new Grupo();
+            $newGrupo->clave = $request->clave;
+            $newGrupo->nombre = $request->nombre;
+            $newGrupo->letra = $request->letra;
+            $newGrupo->grado = $request->grado;
+            $newGrupo->periodo = $request->periodo;
+            $newGrupo->save();
+            $success = true;
+            $message = 'Grupo creado correctamente';
             return response()->json([
                 'success' => $success,
                 'message' => $message
             ]);
+        }catch(\Exception $e){
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
         }
-        $newGrupo = new Grupo();
-        $newGrupo->clave = $request->clave;
-        $newGrupo->nombre = $request->nombre;
-        $newGrupo->letra = $request->letra;
-        $newGrupo->grado = $request->grado;
-        $newGrupo->periodo = $request->periodo;
-        $newGrupo->save();
-        $success = true;
-        $message = 'Grupo creado correctamente';
-        return response()->json([
-            'success' => $success,
-            'message' => $message
-        ]);
     }
     /**
      * Edita un grupo existente.
@@ -74,41 +81,55 @@ class GrupoController extends Controller
      */
     public function editarGrupo(Request $request, $id){
         $admin = Usuario::where('token',$request->token)->where('tipoUsuario','>=', 1)->first();
-        $request->validate([
-            'clave' => 'required|unique:grupos,clave',
-            'nombre' => 'required',
-            'letra' => 'required',
-            'grado' => 'required',
-            'periodo' => 'required'
-        ],[
-            'clave.unique' => 'La clave ya ha sido registrada'
-        ]);
-        if (!$admin) {
-            $success = false;
-            $message = "No cuentas con los permisos necesarios";
+        try{
+            $request->validate([
+                'clave' => 'required',
+                'nombre' => 'required',
+                'letra' => 'required',
+                'grado' => 'required',
+                'periodo' => 'required'
+            ]);
+            if (!$admin) {
+                $success = false;
+                $message = "No cuentas con los permisos necesarios";
+                return response()->json([
+                    'success' => $success,
+                    'message' => $message
+                ]);
+            }
+            $grupo = Grupo::find($id);
+            if($grupo){
+                if($grupo->clave != $request->clave){
+                    $grupoRepetido = Grupo::where('clave',$request->clave)->first();
+                    if ($grupoRepetido) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'La clave ya ha sido registrada'
+                        ]);
+                    }
+                }
+                $grupo->clave = $request->clave;
+                $grupo->nombre = $request->nombre;
+                $grupo->letra = $request->letra;
+                $grupo->grado = $request->grado;
+                $grupo->periodo = $request->periodo;
+                $grupo->save();
+                $success = true;
+                $message = 'Grupo editado correctamente';
+            } else {
+                $success = false;
+                $message = 'No se encontró el grupo';
+            }
             return response()->json([
                 'success' => $success,
                 'message' => $message
             ]);
+        }catch(\Exception $e){
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
         }
-        $grupo = Grupo::find($id);
-        if($grupo){
-            $grupo->clave = $request->clave;
-            $grupo->nombre = $request->nombre;
-            $grupo->letra = $request->letra;
-            $grupo->grado = $request->grado;
-            $grupo->periodo = $request->periodo;
-            $grupo->save();
-            $success = true;
-            $message = 'Grupo editado correctamente';
-        } else {
-            $success = false;
-            $message = 'No se encontró el grupo';
-        }
-        return response()->json([
-            'success' => $success,
-            'message' => $message
-        ]);
     }
     /**
      * Elimina un grupo.

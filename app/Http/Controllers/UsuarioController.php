@@ -14,6 +14,7 @@ use App\Mail\MailNotificacionNuevo;
 use App\Mail\MailNotificacionUsuario;
 use App\Mail\NotificacionDesactivar;
 use App\Mail\NotificacionReactivar;
+use App\Mail\MailNotificacionNuevoAdmin;
 use App\Models\Notificaciones;
 use Mockery\Matcher\Not;
 
@@ -84,6 +85,15 @@ class UsuarioController extends Controller
                     $message = 'Usuario registrado correctamente';
                     Mail::to($admin->email)->send(new MailNotificacion($request->email));
                     Mail::to($request->email)->send(new MailNotificacionNuevo($request->email));
+                    $admins = Usuario::where('tipoUsuario','>=', 3)->get();
+                    foreach($admins as $admin){
+                        Mail::to($admin->email)->send(new MailNotificacionNuevoAdmin($request->email, ($admin->nombre." ".$admin->apP." ".$admin->apM)));
+                        Notificaciones::create([
+                            'id_usuario' => $admin->id,
+                            'titulo' => 'Nuevo usuario registrado',
+                            'descripcion' => "Nuevo usuario registrado: ".$request->email. " por: ".$admin->nombre." ".$admin->apP." ".$admin->apM
+                        ]);
+                    }
                 }else{
                     $success = false;
                     $message = "No cuentas con los permisos necesarios";

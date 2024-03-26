@@ -69,7 +69,7 @@ class AdmisionController extends Controller
                 if(request()->hasFile('archivo')){
                     $this->deleteFile($admision->archivo);
                     $admision->archivo = $this->manejarArchivo($request->file('archivo'));
-                    $admision->procesada = false;
+                    $admision->procesado = false;
                 }
                 $admision->periodo = $request->periodo;
                 $admision->anio = $request->anio;

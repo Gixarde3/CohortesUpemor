@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('grupos', function (Blueprint $table) {
             $table->id();
-            $table->string('clave');
-            $table->string('nombre');
+            $table->string('clave', 20);
+            $table->string('nombre', 20);
             $table->string('letra',1);
-            $table->string('periodo');
+            $table->string('periodo', 1);
             $table->integer('grado')->nullable();
             $table->timestamps();
         });

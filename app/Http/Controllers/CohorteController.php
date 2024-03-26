@@ -26,8 +26,18 @@ class CohorteController extends Controller
             'plan' => 'required',
             'anioperiodo' => 'unique_concat:cohortes,anio,periodo'
         ],[
-            'anioperiodo.unique_concat' => 'El conjunto de año y el periodo ya han sido registrados'
+            'anioperiodo.unique_concat' => 'El conjunto de año, periodo  y planya han sido registrados'
         ]);
+        $cohorteRepetido = Cohorte::where('anio',$request->anio)->
+                            where('periodo',$request->periodo)->
+                            where('plan',$request->plan)->
+                            first();
+        if ($cohorteRepetido) {
+            return response()->json([
+                'success'=> false,
+                'message'=>'El conjunto de año, periodo y plan ya han sido registrados',
+            ]);
+        }
         if ($admin) {
             $newCohorte = new Cohorte();
             $newCohorte->periodo = $request->periodo;
@@ -47,8 +57,6 @@ class CohorteController extends Controller
         return response()->json([
             'success'=> $success,
             'message'=>$message,
-            'cohorte'=>$id,
-            'token'=>$request->token
         ]);
     }
     
@@ -69,8 +77,21 @@ class CohorteController extends Controller
         ],[
             'anioperiodoplan.unique_concat' => 'El conjunto de año y el periodo ya han sido registrados'
         ]);
+
         if ($admin) {
             $cohort = Cohorte::find($id);
+            if($cohort->anio != $request->anio || $cohort->periodo != $request->periodo || $cohort->plan != $request->plan){
+                $cohorteRepetido = Cohorte::where('anio',$request->anio)->
+                            where('periodo',$request->periodo)->
+                            where('plan',$request->plan)->
+                            first();
+                if ($cohorteRepetido) {
+                    return response()->json([
+                        'success'=> false,
+                        'message'=>'El conjunto de año, periodo y plan ya han sido registrados',
+                    ]);
+                }
+            }
             $cohort->periodo = $request->periodo;
             $cohort->anio = $request->anio;
             $cohort->plan = $request->plan;
